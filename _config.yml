@@ -1,0 +1,55 @@
+title: Joseph Choe
+email: joseph@josephchoe.com
+description: >-
+  Write an awesome description for your new site here. You can edit this
+  line in _config.yml. It will appear in your document head meta (for
+  Google search results) and in your feed.xml site description.
+baseurl: ""
+url: https://josephchoe.com
+twitter_username: josephchoe
+github_username:  josephchoe
+
+# Build settings
+source: _app
+destination: _site
+markdown: kramdown
+highlighter: rouge
+# theme: minima
+# plugins:
+#   - jekyll-feed
+include:
+  - _pages
+
+defaults:
+  - scope:
+      path: "_pages"
+      type: pages
+    values:
+      permalink: /:basename
+  - scope:
+      path: "_posts"
+      type: posts
+    values:
+      permalink: :year/:month/:day/:title
+  - scope:
+      path: "_posts/articles"
+      type: posts
+    values:
+      permalink: articles/:title
+      category: articles
+
+# Markdown settings
+kramdown:
+  input:                     GFM
+  auto_ids:                  true
+  footnote_nr:               1
+  entity_output:             as_char
+  toc_levels:                1..6
+  smart_quotes:              lsquo,rsquo,ldquo,rdquo
+  enable_coderay:            false
+  hard_wrap:                 false
+  syntax_highlighter:        rouge
+  syntax_highlighter_opts:
+    css_class:               "highlight"
+  transliterated_header_ids: true
+  footnote_backlink:         "&#8617;&#xfe0e;"

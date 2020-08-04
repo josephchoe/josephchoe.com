@@ -1,0 +1,61 @@
+{%- assign page_url = page.url | replace: 'index.html', '' | replace: 'index', '' | prepend: site.baseurl | prepend: site.url -%}
+
+{%- if page.title -%}
+  {%- assign page_title = page.title -%}
+{%- else -%}
+  {%- assign page_title = site.title -%}
+{%- endif -%}
+
+{%- assign author_name = site.data.authors[page.author].name | default: site.author_name -%}
+
+{%- if page.description -%}
+  {%- assign page_description = page.description -%}
+{%- elsif page.excerpt -%}
+  {%- assign page_description = page.excerpt -%}
+{%- else -%}
+  {%- assign page_description = site.description -%}
+{%- endif -%}
+
+{%- assign page_description = page_description | strip_html | strip_newlines | truncate: 200 -%}
+
+{%- if page.image_url -%}
+  {%- assign image_url = site.url | append: '/assets/images/' | append: page.image_url -%}
+  {%- assign twitter_card_type = 'summary_large_image' -%}
+{%- else -%}
+  {%- assign image_url = site.url | append: site.image_url -%}
+  {%- assign twitter_card_type = 'summary_large_image' -%}
+{%- endif -%}
+
+{%- assign twitter_site_username = site.twitter_username -%}
+{%- assign twitter_creator_username = site.data.authors[page.author].twitter_username | default: site.twitter_username -%}
+
+{%- if page.is_post -%}
+  {%- assign type = "article" -%}
+{%- else -%}
+  {%- assign type = "website" -%}
+{%- endif -%}
+
+{%- if author_name -%}
+  <meta name="author" content="{{ author_name }}" />
+{% endif %}
+  <meta property="og:site_name" content="{{ site.title }}" />
+  <meta property="og:url" content="{{ page_url }}" />
+  <meta property="og:title" content="{{ page_title }}" />
+  <meta property="og:description" content="{{ page_description }}" />
+  <meta property="og:image" content="{{ image_url }}" />
+{% if page.image.width %}
+  <meta property="og:image:width" content="{{ page.image.width }}" />
+{% endif %}
+{% if page.image.height %}
+  <meta property="og:image:height" content="{{ page.image.height }}" />
+{% endif %}
+  <meta property="og:type" content="{{ type }}" />
+
+  <meta name="twitter:card" content="{{ twitter_card_type }}" />
+  <meta name="twitter:site" content="@{{ twitter_site_username }}" />
+  <meta name="twitter:creator" content="@{{ twitter_creator_username }}" />
+  <meta name="twitter:title" content="{{ page_title }}" />
+  <meta name="twitter:description" content="{{ page_description }}" />
+{% if image_url %}
+  <meta name="twitter:image" content="{{ image_url }}" />
+{% endif %}

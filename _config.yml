@@ -30,12 +30,19 @@ defaults:
       type: posts
     values:
       permalink: :year/:month/:day/:title
+      category: blog
   - scope:
-      path: "_posts/articles"
+      path: "_posts/article"
       type: posts
     values:
-      permalink: articles/:title
-      category: articles
+      permalink: article/:title
+      category: article
+  - scope:
+      path: "_posts/writing"
+      type: posts
+    values:
+      permalink: writing/:title
+      category: writing
 
 # Markdown settings
 kramdown:

@@ -2,6 +2,7 @@
 layout: default
 ---
 {% include date-format.html %}
+{% include author.html %}
 
 <article>
   <div class="title">
@@ -11,4 +12,7 @@ layout: default
     <small>{{ page_date }}</small>
   </div>
   {{ content }}
+  <footer>
+    &copy; {{ site.time | date: '%Y' }} <a href="{{ author_site }}">{{ author_name }}</a>.
+  </footer>
 </article>

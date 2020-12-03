@@ -8,6 +8,10 @@ twitter_username: josephchoe
 github_username:  josephchoe
 image_url: /assets/images/zurrey.jpg
 
+# Fallbacks for display
+author_name:
+author_site:
+
 # Build settings
 source: _app
 destination: _site

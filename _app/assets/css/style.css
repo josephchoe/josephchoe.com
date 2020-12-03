@@ -60,6 +60,21 @@ header h1 a:visited{
   text-decoration:none;
 	color:#000
 }
+section h2 small{
+	margin-left:2em
+}
+div.parent{
+	font-size:1.2em;
+	margin:1em 0 -0.5em 0
+}
+div.title h1{
+	/* margin:0 0 0 0; */
+	margin-bottom: 0.25em;
+
+}
+div.date small{
+	font-size:0.8em;
+}
 @media screen and (max-width: 440px){
 	header h1{
 		font-size:2em

@@ -33,4 +33,15 @@ layout: default
   <p>
     I am <a href="https://twitter.com/josephchoe">@josephchoe</a> on Twitter.
   </p>
-</section
+</section>
+
+<section id="recent">
+<h2>Recent <small><a href="{% link _pages/archive.html %}">see all</a></small></h2>
+<ul>
+{% for post in site.posts limit:5 %}
+  <li>
+    <a href="{{ post.url }}">{{ post.title }}</a>
+  </li>
+{% endfor %}
+</ul>
+</section>

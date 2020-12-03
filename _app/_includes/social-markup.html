@@ -1,7 +1,7 @@
 {%- assign page_url = page.url | replace: 'index.html', '' | replace: 'index', '' | prepend: site.baseurl | prepend: site.url -%}
 
 {%- if page.title -%}
-  {%- assign page_title = page.title -%}
+  {%- assign page_title = page.title | append: " | " | append: site.title -%}
 {%- else -%}
   {%- assign page_title = site.title -%}
 {%- endif -%}
@@ -19,26 +19,28 @@
 {%- assign page_description = page_description | strip_html | strip_newlines | truncate: 200 -%}
 
 {%- if page.image_url -%}
-  {%- assign image_url = site.url | append: '/assets/images/' | append: page.image_url -%}
+  {%- assign image_url = site.url | append: page.image_url -%}
   {%- assign twitter_card_type = 'summary_large_image' -%}
 {%- else -%}
   {%- assign image_url = site.url | append: site.image_url -%}
-  {%- assign twitter_card_type = 'summary_large_image' -%}
+  {%- assign twitter_card_type = 'summary' -%}
 {%- endif -%}
 
 {%- assign twitter_site_username = site.twitter_username -%}
 {%- assign twitter_creator_username = site.data.authors[page.author].twitter_username | default: site.twitter_username -%}
 
-{%- if page.is_post -%}
-  {%- assign type = "article" -%}
-{%- else -%}
+{%- if page.is_index -%}
   {%- assign type = "website" -%}
+{%- else -%}
+  {%- assign type = "article" -%}
 {%- endif -%}
 
 {%- if author_name -%}
   <meta name="author" content="{{ author_name }}" />
 {% endif %}
+{%- if page.is_index -%}
   <meta property="og:site_name" content="{{ site.title }}" />
+{% endif %}
   <meta property="og:url" content="{{ page_url }}" />
   <meta property="og:title" content="{{ page_title }}" />
   <meta property="og:description" content="{{ page_description }}" />

@@ -21,6 +21,10 @@ include:
 
 defaults:
   - scope:
+      path: "_pages/index.html"
+    values:
+      is_index: true
+  - scope:
       path: "_pages"
       type: pages
     values:
@@ -29,20 +33,23 @@ defaults:
       path: "_posts"
       type: posts
     values:
+      layout: post
       permalink: :year/:month/:day/:title
-      category: blog
+      category: log
   - scope:
-      path: "_posts/article"
+      path: "_posts/essay"
       type: posts
     values:
-      permalink: article/:title
-      category: article
+      layout: essay
+      permalink: /:title
+      category: essay
   - scope:
-      path: "_posts/writing"
+      path: "_posts/fiction"
       type: posts
     values:
-      permalink: writing/:title
-      category: writing
+      layout: fiction
+      permalink: /:title
+      category: fiction
 
 # Markdown settings
 kramdown:

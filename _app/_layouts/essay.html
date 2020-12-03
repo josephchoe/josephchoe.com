@@ -17,5 +17,9 @@ layout: default
   {{ content }}
   <footer>
     &copy; {{ site.time | date: '%Y' }} <a href="{{ author_site }}">{{ author_name }}</a>.
+
+    <div class="no-comments">
+      <a href="{% link _pages/no-comments.md %}">No comments.</a>
+    </div>
   </footer>
 </article>

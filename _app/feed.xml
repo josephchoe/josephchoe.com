@@ -1,0 +1,58 @@
+---
+---
+
+<?xml version="1.0" encoding="utf-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>{{ site.title }}</title>
+  <subtitle>{{ site.description }}</subtitle>
+  <updated>{{ site.time | date_to_xmlschema }}</updated>
+  <id>{{ "/" | absolute_url | xml_escape }}</id>
+
+  <link rel="alternate" type="text/html" hreflang="en" href="{{ '/' | absolute_url }}" />
+  <link rel="self" type="application/atom+xml" href="{{ amsf_page_url }}" />
+
+  <author>
+    <name>{{ site.data.authors.joseph.name }}</name>
+    <uri>{{ site.data.authors.joseph.website }}</uri>
+    <email>{{ site.data.authors.joseph.email_address }}</email>
+  </author>
+
+  {% for post in site.posts limit:300 %}
+    {% if post.hidden != true %}
+      {% assign entry_link = post.url | absolute_url %}
+
+      <entry>
+        <title>{{ post.title | strip_html | xml_escape }}</title>
+        <id>{{ post.url | absolute_url | xml_escape }}</id>
+        <link rel="alternate" type="text/html" href="{{ entry_link }}" />
+        <published>{{ post.date | date_to_xmlschema }}</published>
+
+        {% if post.last_modified_at %}
+          <updated>{{ post.last_modified_at | date_to_xmlschema }}</updated>
+        {% else %}
+          <updated>{{ post.date | date_to_xmlschema }}</updated>
+        {% endif %}
+
+        <author>
+          <name>{{ site.data.authors[post.author].name }}</name>
+          <uri>{{ site.data.authors[post.author].website }}</uri>
+          <email>{{ site.data.authors[post.author].email_address }}</email>
+        </author>
+
+        <content type="html" xml:base="{{ '/' | absolute_url }}">
+          {% if site.rss_excerpt %}
+            {{ post.excerpt | markdownify | xml_escape }}
+          {% else %}
+            {{ post.excerpt | markdownify | xml_escape }}
+          {% endif %}
+          {{ entry_permalink | xml_escape}}
+        </content>
+
+        {% if post.excerpt and post.excerpt != empty %}
+          <summary>{{ post.excerpt | markdownify | strip_html | strip_newlines | xml_escape }}</summary>
+        {% endif %}
+      </entry>
+    {% endif %}
+  {% endfor %}
+</feed>

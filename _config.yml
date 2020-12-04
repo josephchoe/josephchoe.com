@@ -18,8 +18,9 @@ destination: _site
 markdown: kramdown
 highlighter: rouge
 # theme: minima
-# plugins:
+plugins:
 #   - jekyll-feed
+  - jekyll-last-modified-at
 include:
   - _pages
 

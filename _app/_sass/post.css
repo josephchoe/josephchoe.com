@@ -1,0 +1,20 @@
+div.parent{
+	font-size:1.2em;
+	margin:1em 0 -0.5em 0
+}
+div.title h1{
+	margin-bottom: 0.25em;
+}
+div.post-date small{
+	font-size:0.8em;
+}
+div.page-navigation {
+	margin-top: 2em;
+}
+div.no-comments {
+	margin-top: 2em;
+}
+div.copyright {
+	margin-top: 2em;
+	margin-bottom: 2em;
+}

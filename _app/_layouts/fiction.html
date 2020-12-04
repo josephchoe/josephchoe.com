@@ -11,11 +11,12 @@ layout: default
   <div class="title">
     <h1>{{ page.title | escape }}</h1>
   </div>
-  <div class="date">
+  <div class="post-date">
     <small>{{ page_date }}</small>
   </div>
   {{ content }}
   <footer>
-    &copy; {{ site.time | date: '%Y' }} <a href="{{ author_site }}">{{ author_name }}</a>.
+    {% include page-navigation.html %}
+    {% include copyright.html %}
   </footer>
 </article>

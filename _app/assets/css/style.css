@@ -72,11 +72,18 @@ div.title h1{
 	margin-bottom: 0.25em;
 
 }
-div.date small{
+div.post-date small{
 	font-size:0.8em;
 }
+div.page-navigation {
+	margin-top: 2em;
+}
 div.no-comments {
-	margin-top: 3em;
+	margin-top: 2em;
+}
+div.copyright {
+	margin-top: 2em;
+	margin-bottom: 2em;
 }
 @media screen and (max-width: 440px){
 	header h1{

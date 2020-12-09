@@ -8,6 +8,14 @@ div.title h1{
 div.post-date small{
 	font-size:0.8em;
 }
+article footer {
+  margin-top: 3em;
+}
+article footer hr {
+	border: 0;
+  height: 1px;
+  background: hsla(0,0%,0%,0.2);
+}
 div.page-navigation {
 	margin-top: 2em;
 }

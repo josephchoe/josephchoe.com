@@ -31,9 +31,6 @@ h2 a{
 h2,h3{
 	margin-top:2em
 }
-h3{
-	font-size:1.5em
-}
 a{
 	text-decoration:underline;
 	color:#19469a;
@@ -74,4 +71,5 @@ section h2 small{
 @import "post";
 @import	"syntax";
 @import "quote";
+@import "image";
 @import "screen";

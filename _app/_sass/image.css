@@ -1,0 +1,22 @@
+figure.image {
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+}
+
+figure.image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.25em;
+}
+
+figure.image figcaption {
+  margin-left: 1em;
+}
+
+@media only screen and (max-width:480px) {
+  figure.image img {
+    border-radius: 0;
+  }
+}

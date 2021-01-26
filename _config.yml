@@ -12,6 +12,10 @@ image_url: /assets/images/zurrey.jpg
 author_name:
 author_site:
 
+# Copyright
+copyright_date: 2000-01-01
+copyright_holder: Joseph Choe
+
 # Build settings
 source: _app
 destination: _site

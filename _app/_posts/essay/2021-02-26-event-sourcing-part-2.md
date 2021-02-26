@@ -356,6 +356,6 @@ We now have a reliable way to ensure email uniqueness.
 
 By this point, we have written two separate components, one to accept user registrations and another to ensure email uniqueness. We've made our components idempotent with two separate patterns and protected against concurrent writes.
 
-However, we're *still* not done. The Registration component itself doesn't take email uniqueness into account, as that's take care of by the component we just wrote. What we need to do is to update the Registration component so that it can send and receive messages to and from the User Email Address component.
+However, we're *still* not done. The Registration component itself doesn't take email uniqueness into account, as that's taken care of by the component we just wrote. What we need to do is to update the Registration component so that it can send and receive messages to and from the User Email Address component.
 
 Which is what we'll talk about next time.

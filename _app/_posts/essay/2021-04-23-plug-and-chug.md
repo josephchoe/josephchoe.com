@@ -82,7 +82,7 @@ CREATE TABLE "posts" (
   "post_id" UUID PRIMARY KEY,
   "user_id" UUID NOT NULL,
   "text" VARCHAR NOT NULL,
-  "user_email_addres" VARCHAR NOT NULL,
+  "user_email_address" VARCHAR NOT NULL,
   "user_name" VARCHAR NOT NULL
 );
 

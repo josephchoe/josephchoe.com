@@ -1,0 +1,34 @@
+---
+title: "Work in Progress: June 2021"
+date: 2021-06-25 08:00:00 -0600
+author: joseph
+---
+
+Instead of writing something this week, I thought I might share what I've been working on for the last few months.
+
+If you remember I had a few items I wanted to do that I wrote down at the end of the last year. I think it's useful to go back and revisit the things I said I would do and see how I did.
+
+> * **My personal writing.** I want to get back into writing, whether that be fiction or musing on something more technical. I have a few topics I want to cover here, which I hope will be useful or at the very least mildly entertaining.
+> * **A new computer.** With my laptop almost on its last legs, I’m planning on building my first computer in a long while.
+> * **Newsletter as a service.** I want a newsletter for my website, but I’ve grown wary of using 3rd party software, and I’d much rather own my own data.
+> * **A podcast with my wife.** Which may sound odd, given my comment above on YouTuber culture, but I like the idea of it anyhow.
+
+I've definitely written a ton of stuff. This has been my most successful item, and though I can't say it was terribly good, I've kept at it week after week, which I am certainly proud of.
+
+I built a computer not just for me, but for my wife as well. Both machines are stored on our personal server rack. I also created a network attached storage server and a rather modest 1u server for some workloads I have going on in my homelab. Every single one of these machines was *painful* to build, a reminder why I stopped building computers more than a decade ago. Still, I may go into these builds a little bit more some time down the line.
+
+I didn't code a newsletter. Sometimes you have a goal, and you lose interest halfway there. I'd still like to do something like it, so I might revisit this in another couple of months.
+
+Likewise, developing a podcast is a ton of work. There are a lot of little details that need to be decided, especially if you're not the only creative input.  It's still on the horizon, but other projects became more important, so this one fell by the wayside.
+
+Still, two out of four isn't too bad.
+
+So, what do I have in store for the future?
+
+I have a surprise project I'm planning on releasing next Friday, though I'm not completely sure I'll finish by then. It's taken several months already, and it's not even done yet! It's something I'm very passionate about sharing with others, so I hope someone will enjoy it and have a use for it. I don't want to say too much more about it though.
+
+After that though, I may take a break, though I'm not sure. On the one hand, dividing time between writing and this new project has been quite time consuming. On the other hand, I've enjoyed writing every week, and I'm not sure I want to give that up.
+
+I may write about something less technical though in future, as I never really intended to be someone who only wrote about a single topic to the exclusion of all else.
+
+In any case, fingers crossed for next Friday!

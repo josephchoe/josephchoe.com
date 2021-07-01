@@ -59,6 +59,13 @@ defaults:
       layout: fiction
       permalink: /:title
       category: fiction
+  - scope:
+      path: "_posts/video"
+      type: posts
+    values:
+      layout: video
+      permalink: /:title
+      category: video
 
 # Markdown settings
 kramdown:

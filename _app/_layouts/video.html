@@ -1,0 +1,28 @@
+---
+layout: default
+---
+{% include date-format.html %}
+{% include author.html %}
+
+<article>
+  <div class="parent">
+    <a href="{% link _pages/video.html %}" rel="tag">Videos</a>
+  </div>
+  <div class="title">
+    <h1><a href="https://www.youtube.com/watch?v={{ page.youtube_video_id }}" target="_new">{{ page.title | escape }}</a></h1>
+  </div>
+  <div class="post-date">
+    <small>{{ page_date }}</small>
+  </div>
+  <div class="youtube-embed">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ page.youtube_video_id }}" scrolling="no" frameborder="0" allowfullscreen></iframe>
+  </div>
+
+  {{ content }}
+  <footer>
+    <hr />
+    {% include page-navigation.html %}
+    {% include no-comments.html %}
+    {% include copyright.html %}
+  </footer>
+</article>

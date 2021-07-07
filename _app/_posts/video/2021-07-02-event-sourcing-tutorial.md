@@ -3,6 +3,7 @@ title: Event Sourcing Tutorial in Ruby
 date: 2021-07-02 08:00:00 -0600
 author: joseph
 youtube_video_id: dfAzp9pxp9c
+excerpt: Learn how to build an event sourced web application in Ruby from start to finish.
 ---
 
 ## Description

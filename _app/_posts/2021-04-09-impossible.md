@@ -6,7 +6,7 @@ author: joseph
 
 There are few things I dislike more than hearing the words, "That's impossible," in the context of software development.
 
-If we as programmers are being perfectly frank with ourselves, there's not a whole lot of difficulty in software development, especially web development. I say this a lot, but it bears repeating: software development is simply about copying data from one place to another. Barring
+If we as programmers are being perfectly frank with ourselves, there's not a whole lot of difficulty in software development, especially web development. I say this a lot, but it bears repeating: software development is simply about copying data from one place to another. Therefore, there's little that's impossible in software development, barring things like the laws of physics, of course.
 
 So when I hear developers say, "That's impossible!", I wonder if they're really trying all that hard.
 

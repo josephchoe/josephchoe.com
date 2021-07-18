@@ -4,7 +4,7 @@ date: 2021-05-14 08:00:00 -0600
 author: joseph
 ---
 
-Despite the title, this log is **not** about that well-known software development principle. I have thoughts about that particular principle and its damage on software development as a whole, but I'll write save that particular essay for another time, if I write it at all.
+Despite the title, this log is **not** about that well-known software development principle. I have thoughts about that particular principle and its damage on software development as a whole, but I'll save that particular essay for another time, if I write it at all.
 
 Instead, over the last week I've been thinking about writing and the mindset a so-called "content creator" takes on over time. From my own observations, there comes a point where a content creator runs out of things to say and starts repeating themselves. They start making the same points perhaps dressed in different ways, but they're very much retreading old ground, much like someone telling the same old stories over and over again. Sometimes this can even take the form of simply re-posting old content wholesale.
 

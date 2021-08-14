@@ -11,4 +11,4 @@ Therefore, I have no comments whatsoever.
 
 ## Responses
 
-If you have a response to something I've written on my website, feel free to go ahead and send me a link to a post you've written in reply, preferably on your personal log or website. I am <a href="https://twitter.com/josephchoe">@josephchoe</a> on Twitter. If I have something else to say in response to your response, I might write something and link back to it on the original post.
+If you have a response to something I've written on my website, feel free to go ahead and send me a link to a post you've written in reply, preferably on your personal log or website. I am <a href="{% link _pages/twitter.md %}">@josephchoe</a> on Twitter. If I have something else to say in response to your response, I might write something and link back to it on the original post.

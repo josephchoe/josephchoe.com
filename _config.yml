@@ -9,11 +9,11 @@ github_username:  josephchoe
 image_url: /assets/images/zurrey.jpg
 
 # Fallbacks for display
-author_name:
-author_site:
+author_name: Joseph Choe
+author_site: https://josephchoe.com
 
 # Copyright
-copyright_date: 2000-01-01
+copyright_date: 2021-01-01
 copyright_holder: Joseph Choe
 
 # Build settings

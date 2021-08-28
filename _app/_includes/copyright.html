@@ -1,5 +1,7 @@
 {%- assign copyright_date = page.date | default: site.copyright_date -%}
+{%- assign copyright_holder = author_name | default: site.copyright_holder -%}
+{%- assign copyright_holder_website = author_site | default: site.author_site -%}
 
 <div class="copyright">
-  &copy; {{ copyright_date | date: '%Y' }} <a href="{{ author_site }}">{{ author_name }}</a>.
+  &copy; {{ copyright_date | date: '%Y' }} <a href="{{ copyright_holder_website }}">{{ copyright_holder }}</a>.
 </div>

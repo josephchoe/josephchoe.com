@@ -53,12 +53,12 @@ defaults:
       permalink: /:title
       category: essay
   - scope:
-      path: "_posts/fiction"
+      path: "_posts/book-review"
       type: posts
     values:
-      layout: fiction
+      layout: book-review
       permalink: /:title
-      category: fiction
+      category: book-review
   - scope:
       path: "_posts/video"
       type: posts

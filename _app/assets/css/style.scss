@@ -26,13 +26,15 @@ h1{
 }
 h2 a{
 	color:#000;
-	text-decoration: underline
+	text-decoration: underline;
+	text-decoration-thickness: 0.1em;
 }
 h2,h3{
 	margin-top:2em
 }
 a{
 	text-decoration:underline;
+	text-decoration-thickness: 0.1em;
 	color:#19469a;
 	overflow-wrap:break-word;
 	word-wrap:break-word;
@@ -43,6 +45,7 @@ a:visited{
 }
 a:hover{
 	text-decoration:underline;
+	text-decoration-thickness: 0.1em;
 }
 section{
 	margin-bottom:4em

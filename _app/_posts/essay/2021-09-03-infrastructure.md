@@ -27,7 +27,7 @@ Why exactly?
 
 Part of my decision making was that I didn't want to clutter our desks with bulky workstations. Personal computer cases take up way too much space for my liking, and I didn't want to put these huge heavy computer cases on our rather flimsy desks. Nor did I want to put them on the floor where they could overheat from the carpet.
 
-I also didn't want the noise pollution of several different fans going off at once in our home office. I could mitigate that somewhat by using better CPU and exhaust fans, but the GPU or chipset fans were mostly out of my control. I also didn't want to look into AIC or custom water loops, because at the end of the day, fans are still being used in the radiator, so it's still just as noisy.
+I also didn't want the noise pollution of several different fans going off at once in our home office. I could mitigate that somewhat by using better CPU and exhaust fans, but the GPU or chipset fans were mostly out of my control. I also didn't want to look into AIO coolers or custom water loops, because at the end of the day, fans are still being used in the radiator, so it's still just as noisy.
 
 But, if I could keep the rack out of the way and move a couple of cables to our office, I could have absolute silent computing!
 

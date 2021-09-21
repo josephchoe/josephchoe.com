@@ -81,7 +81,7 @@ I use this for many different odd workloads, including video encoding and even p
 
 Finally, I could build my personal computer, which I've come to call `devbox`. It was supposed to replace my laptop, but it's grown to be much more. Building the other computers allowed me to make more informed decisions, and I decided to *also* use the same virtualization engine on the `devbox` in order to virtualize whatever operating system I needed.
 
-So I've got a virtual machine for personal software development, one for work, another to edit videos in Windows 8, and yet another to play video games, though this one doesn't get used very much, alas. These VMs passthrough the relevant USB and PCIe, also using a USB extender and DisplayPort cable, to the monitor and keyboard at my desk.
+So I've got a virtual machine for personal software development, one for work, another to edit videos in Windows 10, and yet another to play video games, though this one doesn't get used very much, alas. These VMs passthrough the relevant USB and PCIe, also using a USB extender and DisplayPort cable, to the monitor and keyboard at my desk.
 
 Doing things this way also allows me to try out operating systems like Fedora or OpenBSD, breaking things without worrying about doing things the "right" way. Coupled with the NAS and the virtualization server, I have a lot of computing power available to use at my fingertips.
 

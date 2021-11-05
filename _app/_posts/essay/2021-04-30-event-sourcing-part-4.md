@@ -4,6 +4,8 @@ date: 2021-04-30 08:00:00 -0600
 author: joseph
 ---
 
+> **Note:** Be sure to check out my 11+ hour video tutorial on [event sourcing]({% post_url video/2021-07-02-event-sourcing-tutorial  %})!
+
 It took a while, but we're finally here.
 
 We've built a component that accepted [user registrations]({% post_url /essay/2021-01-29-event-sourcing-part-1 %}) and one that handled [email uniqueness]({% post_url /essay/2021-02-26-event-sourcing-part-2 %}). We designed them to communicate with each other through the [publish and subscribe]({% post_url /essay/2021-03-26-event-sourcing-part-3 %}) messaging pattern. But this is all pointless if our applications can't use the events in some way to show data to users.

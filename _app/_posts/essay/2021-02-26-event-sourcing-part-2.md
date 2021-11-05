@@ -4,6 +4,8 @@ date: 2021-02-26 08:00:00 -0600
 author: joseph
 ---
 
+> **Note:** Be sure to check out my 11+ hour video tutorial on [event sourcing]({% post_url video/2021-07-02-event-sourcing-tutorial  %})!
+
 Last month I discussed how to build a component that accepted [user registrations]({% post_url /essay/2021-01-29-event-sourcing-part-1 %}). We learned about the basic building blocks of an Eventide component, including entities, messages, projections, and handlers.
 
 But that component remained incomplete, as it didn't take email uniqueness into account. We'll be discussing all that and more today, with actual code examples.

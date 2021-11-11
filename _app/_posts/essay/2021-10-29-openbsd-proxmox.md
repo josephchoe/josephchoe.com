@@ -37,7 +37,7 @@ Then, I set the memory to a ballooning device with about 2 to 8 GB of memory, us
 Once that's done, I need to log into the shell and edit a file:
 
 ```sh
-> nano /etc/pve/qemu-server/100.conf
+$ nano /etc/pve/qemu-server/100.conf
 ```
 
 Here I'll set the CPU with the following flags:

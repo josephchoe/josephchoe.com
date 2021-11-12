@@ -6,7 +6,7 @@ author: joseph
 
 Lately, I've been thinking about how Ruby web applications are deployed.
 
-In most applications, you have a web server like `nginx` serving static pages. These web servers can also route traffic to web applications usually application servers like `puma`, which then allows us to interface with the [Rack application]({% post_url video/2021-07-16-rack-the-best-ruby-web-framework %}).
+In most applications, you have a web server like `nginx` serving static pages. These web servers can also route traffic to application servers like `puma`, which then allows for the use of the [Rack interface]({% post_url video/2021-07-16-rack-the-best-ruby-web-framework %}).
 
 However, this means you have both the web server and the application server running constantly. Which might be what you want, depending on your use case, but also maybe not.
 
@@ -25,7 +25,7 @@ puts
 puts "Hello, world!"
 ```
 
-Via CGI, we're printing output to the user when we print messages to `$stdout`. You can see familiar elements like the HTTP status code, a header, and the body of the response separated from the headers by a newline.
+Via CGI, we're printing output to the user on the browser by printing messages to `$stdout`. You can see familiar elements like the HTTP status code, a header, and the body of the response separated from the headers by a newline.
 
 If you run this script, it will simply print to `$stdout`:
 

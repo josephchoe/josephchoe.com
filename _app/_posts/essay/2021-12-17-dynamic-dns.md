@@ -114,10 +114,10 @@ ruby $HOME/dynamic-dns/dynamic_dns.rb
 Finally, I setup a cronjob to execute the script every fifteen minutes.
 
 ```sh
-*/15 * * * * /home/joseph/dynamic_dns.sh
+*/15 * * * * /home/joseph/bin/dynamic-dns.sh
 ```
 
-I can also call the script manually through `./dynamic_dns.sh` if I want.
+I can also call the script manually if I want.
 
 ## Conclusion
 

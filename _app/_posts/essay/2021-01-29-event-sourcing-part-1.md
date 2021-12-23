@@ -4,7 +4,7 @@ date: 2021-01-29 08:00:00 -0600
 author: joseph
 ---
 
-> **Note:** Be sure to check out my 11+ hour video tutorial on [event sourcing]({% post_url video/2021-07-02-event-sourcing-tutorial  %})!
+> **Note:** Be sure to check out my 11+ hour video tutorial on [event sourcing]({% post_url video/2021-07-02-event-sourcing-tutorial %})!
 
 Event sourcing is an unexplored space in the Ruby landscape, with very few resources detailing how to build and design such systems. Therefore, I'm going to talk about how to build an event sourced system through a sequence of four, maybe five, essays, with actual written code examples.
 

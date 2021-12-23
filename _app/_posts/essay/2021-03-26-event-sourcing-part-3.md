@@ -4,7 +4,7 @@ date: 2021-03-26 08:00:00 -0600
 author: joseph
 ---
 
-> **Note:** Be sure to check out my 11+ hour video tutorial on [event sourcing]({% post_url video/2021-07-02-event-sourcing-tutorial  %})!
+> **Note:** Be sure to check out my 11+ hour video tutorial on [event sourcing]({% post_url video/2021-07-02-event-sourcing-tutorial %})!
 
 Over the last two months, I've talked about how to build event sourced components. One of these components accepts [user registrations]({% post_url /essay/2021-01-29-event-sourcing-part-1 %}), while the other handles [email uniqueness]({% post_url /essay/2021-02-26-event-sourcing-part-2 %}).
 

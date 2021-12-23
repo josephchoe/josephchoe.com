@@ -4,7 +4,7 @@ date: 2021-04-30 08:00:00 -0600
 author: joseph
 ---
 
-> **Note:** Be sure to check out my 11+ hour video tutorial on [event sourcing]({% post_url video/2021-07-02-event-sourcing-tutorial  %})!
+> **Note:** Be sure to check out my 11+ hour video tutorial on [event sourcing]({% post_url video/2021-07-02-event-sourcing-tutorial %})!
 
 It took a while, but we're finally here.
 

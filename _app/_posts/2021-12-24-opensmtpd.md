@@ -115,7 +115,7 @@ match from local action relay_to_mx0
 
 Again I set the `no-verify` option because I don't want to generate a certificate for each server.
 
-After restarting the `smtpd` daemon, we can edit the `/etc/pf.conf` file:
+Now let's edit the `/etc/pf.conf` file:
 
 ```conf
 if = "vio0"

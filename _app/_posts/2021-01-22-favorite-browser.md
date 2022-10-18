@@ -2,6 +2,8 @@
 title: My Favorite Browser (Or Why It Doesn't Matter)
 date: 2021-01-22 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/01/22/favorite-browser
 ---
 
 I vaguely remember the browser wars of the late 90s. I was a teenager back then, so I mostly followed the crowd with no fully-formed opinions of my own.

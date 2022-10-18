@@ -2,6 +2,8 @@
 title: Jordan Peterson Hasn't Read the Bible
 date: 2021-03-12 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/03/12/jordan-peterson-hasnt-read-the-bible
 ---
 
 I admit that the title of this entry is more than a bit hyperbolic, but that is completely intentional. I think it's rather funny and interesting when someone who purports to be religious makes simple mistakes about their own religion. Much like an historian or doctor might think it's interesting when popular media makes mistakes about their own profession.

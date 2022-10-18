@@ -2,6 +2,8 @@
 title: Allergies
 date: 2021-05-21 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/05/21/allergies
 ---
 
 My allergies used to be a huge problem.

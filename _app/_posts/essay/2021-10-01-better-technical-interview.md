@@ -46,7 +46,7 @@ Every time I've interviewed in this way, I've found better, more technically pro
 
 There's a couple of reasons for this, most of which I already detailed in my [earlier essay]({% post_url essay/2021-02-05-technical-assessments-are-dumb%}). Technical assessments are pointless, they're stressful, and they aren't a useful measure of a developer's technical skill.
 
-But more importantly, if a developer can't talk about software development in any sort of articulate way; if their mentality is more to [plug and chug]({% post_url essay/2021-04-23-plug-and-chug %}) solutions or [code without thinking]({% post_url 2021-05-07-not-just-a-code-monkey%}); if they have no [inherent curiosity]({% post_url 2021-02-19-snooping %}).
+But more importantly, if a developer can't talk about software development in any sort of articulate way; if their mentality is more to [plug and chug]({% post_url essay/2021-04-23-plug-and-chug %}) solutions or [code without thinking]({% post_url 2021-05-07-code-monkey%}); if they have no [inherent curiosity]({% post_url 2021-02-19-snooping %}).
 
 Then all of this will be evident in the interview!
 

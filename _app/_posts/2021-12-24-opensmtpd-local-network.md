@@ -2,6 +2,8 @@
 title: OpenSMTPD on the Local Network
 date: 2021-12-24 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/12/24/opensmtpd
 ---
 
 One of the many great things about OpenBSD is that it comes with OpenSMTPD by default, allowing my servers to communicate with themselves and each other via the SMTP protocol. This is used to send insecurity reports, failed cron jobs, et cetera to various users on the system.

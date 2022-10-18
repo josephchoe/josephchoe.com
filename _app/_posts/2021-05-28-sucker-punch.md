@@ -2,6 +2,8 @@
 title: Sucker Punch
 date: 2021-05-28 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/05/28/sucker-punch
 ---
 
 This is a story from over a decade ago, when I was but a junior developer fresh out of college.

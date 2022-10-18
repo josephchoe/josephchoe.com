@@ -2,6 +2,8 @@
 title: That's Impossible
 date: 2021-04-09 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/04/09/impossible
 ---
 
 There are few things I dislike more than hearing the words, "That's impossible," in the context of software development.

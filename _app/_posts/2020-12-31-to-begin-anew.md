@@ -2,6 +2,8 @@
 title: To Begin Anew
 date: 2020-12-31 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2020/12/31/to-begin-anew
 ---
 
 A couple of weeks ago, I quit my job.

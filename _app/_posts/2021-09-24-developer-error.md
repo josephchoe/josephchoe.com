@@ -2,6 +2,8 @@
 title: Developer Error
 date: 2021-09-24 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/09/24/developer-error
 ---
 
 There arose a situation this week where two developers discussed a design that I was sure was a mistake. As I sat there listening, I wondered whether I should continue to [observe]({% post_url 2021-09-10-farming-metaphor%}) or if I should intervene in some way.

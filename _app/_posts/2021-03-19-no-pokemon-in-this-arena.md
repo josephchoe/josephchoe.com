@@ -2,6 +2,8 @@
 title: No Pokémon in This Arena
 date: 2021-03-19 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/03/19/no-pokemon-in-this-arena
 ---
 
 There is an idiom that people use to indicate they have no stake in the outcome of a particular argument.

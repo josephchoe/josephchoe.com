@@ -2,6 +2,8 @@
 title: Farming Metaphor
 date: 2021-09-10 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/09/10/farming-metaphor
 ---
 
 About a year or two ago, I started watching a lot of YouTube farming or homestead videos.

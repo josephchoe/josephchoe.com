@@ -2,6 +2,8 @@
 title: Why I Don't Have a Smartphone
 date: 2021-01-15 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/01/15/no-smartphone
 ---
 
 People are always surprised when they see my phone.

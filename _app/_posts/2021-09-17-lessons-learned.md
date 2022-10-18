@@ -2,6 +2,8 @@
 title: Lessons Learned Making Videos
 date: 2021-09-17 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/09/17/lessons-learned
 ---
 
 I started making [videos]({% link _pages/video.html %}) in June, began posting them in July, and then took a break in September.

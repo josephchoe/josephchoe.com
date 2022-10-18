@@ -2,6 +2,8 @@
 title: Don't Repeat Yourself
 date: 2021-05-14 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/05/14/dont-repeat-yourself
 ---
 
 Despite the title, this log is **not** about that well-known software development principle. I have thoughts about that particular principle and its damage on software development as a whole, but I'll save that particular essay for another time, if I write it at all.

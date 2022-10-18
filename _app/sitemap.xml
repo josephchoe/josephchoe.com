@@ -10,13 +10,16 @@
   </url>
 
   {% for page in site.html_pages %}
-    {% if page.hidden != true %}
-      <url>
-        <loc>{{ page.url | absolute_url | replace: '/index.html', '/' }}</loc>
-        {% if page.last_modified_at %}
-          <lastmod>{{ page.last_modified_at | date: "%F" }}</lastmod>
-        {% endif %}
-      </url>
+    {% if page.redirect %}
+    {% else %}
+      {% if page.hidden != true %}
+        <url>
+          <loc>{{ page.url | absolute_url | replace: '/index.html', '/' }}</loc>
+          {% if page.last_modified_at %}
+            <lastmod>{{ page.last_modified_at | date: "%F" }}</lastmod>
+          {% endif %}
+        </url>
+      {% endif %}
     {% endif %}
   {% endfor %}
 

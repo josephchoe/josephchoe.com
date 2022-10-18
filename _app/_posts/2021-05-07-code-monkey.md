@@ -2,6 +2,8 @@
 title: Not Just a Code Monkey
 date: 2021-05-07 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/05/07/not-just-a-code-monkey
 ---
 
 I'm always more than a little baffled by the inherent contradictions in software development.

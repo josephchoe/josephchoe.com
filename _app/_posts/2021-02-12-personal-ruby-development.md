@@ -2,6 +2,8 @@
 title: My Ruby Development Environment
 date: 2021-02-12 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/02/12/ruby-development
 ---
 
 When I come into a new Ruby project, whether that be through a new job or contract work or open source project, each one will generally follow the same principles, in that they'll use the same package manager, they'll have a `Gemfile` to note dependencies, and so forth.

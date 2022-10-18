@@ -2,6 +2,8 @@
 title: Exploring Ruby CGI
 date: 2021-11-12 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/11/12/exploring-ruby-cgi
 ---
 
 Lately, I've been thinking about how Ruby web applications are deployed.

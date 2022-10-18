@@ -2,6 +2,8 @@
 title: Punitive Measures
 date: 2021-10-08 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/10/08/punitive-measures
 ---
 
 Facebook's little mishap this week prompted the joke that some poor network engineer might be getting fired for mishandling a configuration file.

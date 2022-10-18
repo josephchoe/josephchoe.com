@@ -2,6 +2,8 @@
 title: A Year of Writing
 date: 2021-12-31 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/12/31/year-of-writing
 ---
 
 This year was a bit of an odd one for me.

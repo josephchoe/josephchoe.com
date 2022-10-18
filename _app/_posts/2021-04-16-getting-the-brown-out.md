@@ -2,6 +2,8 @@
 title: Getting the Brown Out
 date: 2021-04-16 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/04/16/getting-the-brown-out
 ---
 
 At the beginning of the new year, I made a resolution to [work on my writing]({% post_url 2020-12-31-to-begin-anew %}). And over the last fifteen weeks, I've been writing an essay every week. Not all of them have been very good, but some of them have been okay.

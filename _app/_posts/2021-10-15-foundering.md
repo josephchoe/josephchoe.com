@@ -2,6 +2,8 @@
 title: Foundering Down to the Ground
 date: 2021-10-15 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/10/15/foundering-down-to-the-ground
 ---
 
 I was once a co-founder of a startup.

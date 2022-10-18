@@ -2,6 +2,8 @@
 title: The New Framework
 date: 2021-10-22 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/10/22/framework
 ---
 
 I purchased a new [Framework laptop](https://frame.work).

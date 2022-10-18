@@ -25,6 +25,7 @@ highlighter: rouge
 plugins:
 #   - jekyll-feed
   - jekyll-last-modified-at
+  - jekyll-redirect-from
 include:
   - _pages
 
@@ -38,12 +39,13 @@ defaults:
       type: pages
     values:
       permalink: /:basename
+      is_site: true
   - scope:
       path: "_posts"
       type: posts
     values:
       layout: post
-      permalink: :year/:month/:day/:title
+      permalink: /:title
       category: log
   - scope:
       path: "_posts/essay"

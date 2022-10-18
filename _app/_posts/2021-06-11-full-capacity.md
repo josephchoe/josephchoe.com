@@ -2,6 +2,8 @@
 title: Full Capacity
 date: 2021-06-11 08:00:00 -0600
 author: joseph
+redirect_from:
+  - /2021/06/11/full-capacity
 ---
 
 I've had the grave misfortune to work for companies that believed that software developers needed to be utilized at 100% capacity in order to maximize their value and efficiency.

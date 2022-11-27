@@ -3,6 +3,7 @@ title: OpenBSD on a Proxmox VM!
 date: 2022-11-18 07:00:00 -0600
 author: joseph
 youtube_video_id: 2u0Iqh4vzeo
+excerpt: Here's how I install OpenBSD onto a Proxmox virtual machine!
 ---
 
 ## Description

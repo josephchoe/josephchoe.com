@@ -54,8 +54,6 @@ route do |r|
 end
 ```
 
-I use Eventide to write [autonomous, evented services]({% post_url /essay/2021-01-29-event-sourcing-part-1 %}). All of the business logic will be contained within these services, stored in messages on a message store.  These services will then populate databases via view data components that my web applications can query.
-
 ### Database
 
 Speaking of databases, for the most part I use PostgreSQL, but I never use any ORM like ActiveRecord or Sequel. Instead, I write queries in pure SQL that are then  executed using the `pg` gem.
@@ -79,7 +77,6 @@ Put all together, my ideal tech stack is:
 * Vanilla HTML and JavaScript, or Vue.js
 * Ruby
 * Rack
-* Eventide
 * PostgreSQL
 * Packer
 * Terraform

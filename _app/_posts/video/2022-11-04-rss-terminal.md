@@ -10,4 +10,8 @@ excerpt: Here's how I subscribe and consume content via RSS (or Atom) on the ter
 
 Here's how I subscribe and consume content via RSS (or Atom) on the terminal, with `sfeed`, `fdm`, and `mblaze`!
 
+### Credits
+
+Edited by: [Eileen Wu](https://eileenwu.com)
+
 Discuss: [https://reddit.com/r/josephchoe](https://reddit.com/r/josephchoe)

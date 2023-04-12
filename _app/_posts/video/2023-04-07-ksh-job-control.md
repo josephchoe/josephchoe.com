@@ -1,6 +1,6 @@
 ---
 title: ksh job control!
-date: 2023-03-31 07:00:00 -0600
+date: 2023-04-07 07:00:00 -0600
 author: joseph
 youtube_video_id: bEX-h3nEl34
 excerpt: If you learn one thing, learn to control your jobs!

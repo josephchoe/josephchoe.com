@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Installing OpenBSD on a Proxmox VM | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/openbsd-proxmox" />
+  <meta property="og:title" content="Installing OpenBSD on a Proxmox VM | Joseph Choe" />
+  <meta property="og:description" content="I’ve been playing around with operating systems lately that I wouldn’t have before building out my new infrastructure." />
+  <meta property="og:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="Installing OpenBSD on a Proxmox VM | Joseph Choe" />
+  <meta name="twitter:description" content="I’ve been playing around with operating systems lately that I wouldn’t have before building out my new infrastructure." />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="parent">
+    <a href="/essay" rel="tag">Essays</a>
+  </div>
+  <div class="title">
+    <h1>Installing OpenBSD on a Proxmox VM</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Oct 29 2021</small>
+  </div>
+  <p>I’ve been playing around with operating systems lately that I wouldn’t have before building out my new <a href="/infrastructure">infrastructure</a>.</p>
+
+<p>Some like Gentoo Linux I’ve only done for hobbyist reasons. But others like OpenBSD I plan to use for running actual services on both my home network and personal projects.</p>
+
+<p>But I also want to use OpenBSD as my daily driver operating system, and because of the way my <code class="language-plaintext highlighter-rouge">devbox</code> acts as my personal computer in a lot of ways, I’d like to be able to interact with the VMs as such, including with monitor and keyboard support, rather than through the Proxmox browser UI.</p>
+
+<p>This means I need PCIe passthrough, which means I need UEFI.</p>
+
+<p>However, I’ve run into a bit of trouble getting UEFI to work with an OpenBSD installation on Proxmox.</p>
+
+<h2 id="the-problem">The Problem</h2>
+
+<p>OpenBSD comes with several different types of installation media, including <code class="language-plaintext highlighter-rouge">.iso</code> and <code class="language-plaintext highlighter-rouge">.img</code>. The <code class="language-plaintext highlighter-rouge">.iso</code> file doesn’t contain any UEFI boot loaders, because you’re supposed to use the <code class="language-plaintext highlighter-rouge">.img</code> file for that purpose.</p>
+
+<p>But every time I used the <code class="language-plaintext highlighter-rouge">.img</code> file, the Proxmox VM would not boot. I could only boot using the <code class="language-plaintext highlighter-rouge">.iso</code> file in BIOS.</p>
+
+<p>So, here’s my solution, even if it’s a little bit goofy.</p>
+
+<h2 id="pre-installation">Pre-Installation</h2>
+
+<p>First, I create a new VM in Proxmox. I make sure to set the CD image as the <code class="language-plaintext highlighter-rouge">.iso</code> installation file, and select the <strong>Guest OS</strong> as <em>Other</em>.</p>
+
+<p>Next, I select the <strong>BIOS</strong> as <em>SeaBIOS</em> and the <strong>machine</strong> as <em>q35</em>.</p>
+
+<p>My hard disk will be a <em>SCSI</em> device with some amount of memory, depending on the workload, though usually 32 GB is enough. Due to my NAS, I have more than enough space to play around with.</p>
+
+<p>I set the <strong>CPU</strong> to <em>1 core</em>, though I’ll revisit the CPU after I’m done with this setup wizard.</p>
+
+<p>Then, I set the memory to a ballooning device with about 2 to 8 GB of memory, usually dependent on the workload. After setting up the network device to the specific VLAN set aside for services, I confirm the setup and click <em>Finish</em>.</p>
+
+<p>Once that’s done, I need to log into the shell and edit a file:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano /etc/pve/qemu-server/100.conf
+</code></pre></div></div>
+
+<p>Here I’ll set the CPU with the following flags:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cpu: host,hidden=1,flags=+pcid
+</code></pre></div></div>
+
+<p>This will allow me to passthrough my GPU’s PCIe lane to the virtual machine.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>Now I start the virtual machine and go through the OpenBSD installation process.</p>
+
+<p>It’s a pretty simple installer, so you don’t need to stray very far from the default settings. Here though I make sure to select <em>GPT</em> instead of <em>MBR</em> when asked:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Use <span class="o">(</span>W<span class="o">)</span>hole disk MBR, whole disk <span class="o">(</span>G<span class="o">)</span>PT, <span class="o">(</span>O<span class="o">)</span>penBSD area or <span class="o">(</span>E<span class="o">)</span>dit?
+</code></pre></div></div>
+
+<p>If we select MBR, then we’ll only be able to boot up the virtual machine in BIOS and not UEFI, which means we won’t be able to passthrough PCIe, which in turn defeats the whole point of the exercise.</p>
+
+<h2 id="post-installation">Post-Installation</h2>
+
+<p>After the installation is complete, I halt the virtual machine and change the <strong>BIOS</strong> option to UEFI. Don’t forget to add an EFI disk and any PCIe passthrough. I make sure to passthrough the GPU and the USB controller that my USB extender is plugged into.</p>
+
+<p>After that, the virtual machine will boot as normal and use my GPU. Huzzah!</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Like I said, this is a bit kludgy, but if there’s a better way, feel free to tell me! I’d be happy to change my current procedure.</p>
+
+<p>All in all, this has been a game changer for me. Being able to boot whatever operating system I want or need has allowed me to learn a lot. Turns out, you learn a lot faster when you have the freedom to break things and spin up fresh new VMs with a click of a button.</p>
+
+<p>One thing I noticed was that GPU passthrough was a little bit weird with my Radeon RX 5500 XT. I have to restart the machine after each VM is stopped  because the GPU doesn’t properly reset, even with Nicholas Sherlock’s <code class="language-plaintext highlighter-rouge">vendor-reset</code> <a href="https://www.nicksherlock.com/2020/11/working-around-the-amd-gpu-reset-bug-on-proxmox/">workaround</a>.</p>
+
+<p>However, within the last couple of months, after running <code class="language-plaintext highlighter-rouge">apt dist-upgrade</code> on the Proxmox server, I’ve found that I’ve been able to reboot VMs without needing to reboot the entire machine in between. So I guess that was fixed? I’m not really sure. And I’ve noticed some weird problems with my USB extender as well.</p>
+
+<p>Still, those problems aren’t enough for me to rethink my current setup quite yet. I’m very pleased with how things have turned out.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/framework">&laquo; The New Framework</a>
+
+
+|
+
+
+  <a class="next" href="/openntpd">Provisioning an NTP Server &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Trust No One | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/trust" />
+  <meta property="og:title" content="Trust No One | Joseph Choe" />
+  <meta property="og:description" content="I’m always uneasy when using open source, especially in a professional context." />
+  <meta property="og:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="Trust No One | Joseph Choe" />
+  <meta name="twitter:description" content="I’m always uneasy when using open source, especially in a professional context." />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="parent">
+    <a href="/essay" rel="tag">Essays</a>
+  </div>
+  <div class="title">
+    <h1>Trust No One</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Apr 2 2021</small>
+  </div>
+  <p>I’m always uneasy when using open source, especially in a professional context.</p>
+
+<p>I don’t mind using open source when I’m developing on my own time and my own projects. It saves a lot of time and work to use code for a problem that’s already been solved by someone far more knowledgeable than me.</p>
+
+<p>But when you put any open source code into production, you’re putting your trust in a third party.</p>
+
+<p>And maybe that trust is misplaced.</p>
+
+<p>Let’s talk about three instances of open source gone wrong.</p>
+
+<h2 id="ant-design">Ant Design</h2>
+
+<p>Ant Design is a UI design framework for React web applications. On September 18, 2018, one of the main project contributors committed a <a href="https://github.com/ant-design/ant-design/commit/00aebeb9756afecc884ad48486084836b9a2707a">“Christmas easter egg”</a> into the project.</p>
+
+<p>If you do not know Chinese, the top comment from the main project contributor reads “changelog 里无须体现”, or “No need to add this to the changelog.” The contributor was deliberately attempting to hide this easter egg from the consumers of their package.</p>
+
+<p>The change itself was rather harmless, as the only thing it did was to convert all buttons into snow-covered buttons on Christmas Day and added a popup tooltip reading “Ho Ho Ho!” However, I have no doubt that there were a lot of developers pulled into work on Christmas because of this.</p>
+
+<p>Most companies have a non-existent sense of humor about these sorts of things, especially for things they can <em>see</em> with their own eyes. I am not particularly surprised hearing about one or two developers losing their job due to this “joke”.</p>
+
+<h2 id="eventstream">EventStream</h2>
+
+<p>On September 16, 2018, a bad actor was <a href="https://github.com/dominictarr/event-stream/issues/116">granted access to the <code class="language-plaintext highlighter-rouge">event-stream</code> repository</a>, who then proceeded to add code that would steal private keys to cryptocurrency wallets. The malicious code would wait until certain conditions were met before activating, so the problem wasn’t caught until November 20, 2018, by which time the package had been downloaded several hundred times, as the library itself was used in a number of packages across the <code class="language-plaintext highlighter-rouge">npm</code> ecosystem.</p>
+
+<p>There’s a question of what a project maintainer owes to the community at large. Maintaining an open source project is a thankless task, especially if it’s a package that is used widely in the broader ecosystem. You have a lot of demands on your time, but aren’t really compensated for your work either.</p>
+
+<p>I’m a big proponent of <a href="/technical-assessments-are-dumb">programmers being paid for the code they write</a>. However, it’s not great when a bad actor is able to cause so much damage due to your own actions and negligence.</p>
+
+<h2 id="actix-web">Actix Web</h2>
+
+<p>Actix Web is a web framework written in Rust. On January 17, 2020, <a href="https://web.archive.org/web/20200117175509/https://github.com/actix/actix-web/blob/7f39beecc3efb1bfdd6a79ffef166c09bf982fb0/README.md">the package was removed</a> from its original repository and moved to the project maintainer’s personal repository. I can’t really know how much damage this caused, as I’m not really familiar with the Rust community, but I imagine it was not a good day for quite a number of programmers.</p>
+
+<p>The reverse of the above question is what does the community at large owe to its project maintainers? So many people become burnt out by the project they once loved. I’ve seen it happen many times.</p>
+
+<p>However, to go and destroy any good will generated from your original work seems a bit of an extreme escalation.</p>
+
+<p>I don’t have a great answer, but I know that if I was depending on this code for my own systems I’d be reevaluating that decision.</p>
+
+<h2 id="what-to-do">What to do?</h2>
+
+<p>I’m not saying that open source developers aren’t doing valuable work. They certainly are, and without open source, a lot of technologies would be left in the hands of huge companies and out of reach to everyone else.</p>
+
+<p>But when you’re developing in a professional context, you need to <a href="/snooping">evaluate every line of code that goes into your system</a>. You need to know how it works and how it may interact with other parts of your system, even if that code was written by the open source community, <em>especially</em> if it was written by the open source community.</p>
+
+<p>People like to use packaging systems like <code class="language-plaintext highlighter-rouge">Rubygems</code> or <code class="language-plaintext highlighter-rouge">npm</code> when pulling in third party code, especially in continuous deployment pipelines. But as we’ve seen above, those systems would not have prevented a bad actor at the individual contributor level from causing a mess in your own systems.</p>
+
+<p>What I like to do instead is to directly pull in the portions of the code that I need. Most open source projects cater to as many different use cases as they can, which means there’s a lot of code you might not even need for your own particular use case. Open a new file, copy in the code you do need, and use that in lieu of downloading the package.</p>
+
+<p>Make sure that the project’s license supports what you’re doing, including the licenses of any upstream dependencies, as there are some projects that specifically restrict that sort of activity.</p>
+
+<p>And of course it’s imperative that you keep up to date with the project you’re copying from, to make sure there aren’t any bugs in the originating code that you might need to fix in your own fork. But at least you can rest assured that every subsequent deployment to production will not be potentially harmed by people outside your own organization.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/event-sourcing-part-3">&laquo; Event Sourcing, Part 3: Publish and Subscribe</a>
+
+
+|
+
+
+  <a class="next" href="/impossible">That's Impossible &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>

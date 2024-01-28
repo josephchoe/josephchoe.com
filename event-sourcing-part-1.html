@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Event Sourcing, Part 1: User Registration | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/event-sourcing-part-1" />
+  <meta property="og:title" content="Event Sourcing, Part 1: User Registration | Joseph Choe" />
+  <meta property="og:description" content="  Note: Be sure to check out my 11+ hour video tutorial on event sourcing!" />
+  <meta property="og:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="Event Sourcing, Part 1: User Registration | Joseph Choe" />
+  <meta name="twitter:description" content="  Note: Be sure to check out my 11+ hour video tutorial on event sourcing!" />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="parent">
+    <a href="/essay" rel="tag">Essays</a>
+  </div>
+  <div class="title">
+    <h1>Event Sourcing, Part 1: User Registration</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Jan 29 2021</small>
+  </div>
+  <blockquote>
+  <p><strong>Note:</strong> Be sure to check out my 11+ hour video tutorial on <a href="/event-sourcing-tutorial">event sourcing</a>!</p>
+</blockquote>
+
+<p>Event sourcing is an unexplored space in the Ruby landscape, with very few resources detailing how to build and design such systems. Therefore, I’m going to talk about how to build an event sourced system through a sequence of four, maybe five, essays, with actual written code examples.</p>
+
+<p>I’m not going to talk about <em>why</em> you should write event sourced services. That in itself is a pretty huge topic and could be its own sequence, and one I don’t really feel equipped to talk about now.</p>
+
+<p>But sometimes learning is best done through doing.</p>
+
+<h2 id="disclaimer">Disclaimer</h2>
+
+<p>This essay is a tool for learning. I would never advocate using code found on the Internet somewhere and copying it wholesale into your production systems. Read the essay to the end, as well as the following parts of the sequence when they come out, and discover for yourself whether there’s anything useful to learn here. It’s important to understand <em>every line of code</em> you put into your own systems.</p>
+
+<h2 id="a-minor-tangent">A Minor Tangent</h2>
+
+<p>I first learned about event sourcing by watching a GOTO 2014 conference video with Greg Young where he talked about event sourcing, CQRS, and DDD. He talked about how there was another way to do software development.</p>
+
+<p>When I first saw that video, I felt like my eyes were opened. I had been working on legacy monoliths of one stripe or another for a long time, first in C# and then in Ruby. But the same problems always reared their ugly heads, no matter the language used. Here it seemed was one piece of a missing puzzle that allowed me to look beyond basic web development into a more coherent architecture.</p>
+
+<p>Another piece of that puzzle was filled when I took the course Advanced Distributed Systems Design by Udi Dahan and learned about <strong>Service-Oriented Architecture</strong>. A lot of what he said made sense, and I really began to understand the shape of what distributed systems should look like and why.</p>
+
+<p>But the problem here was that there were no concrete examples of how to <em>build</em> these systems. There was a lot of theory but not a lot of practical application of that theory. Neither Greg Young nor Udi Dahan could avail me, and I suppose I could understand their implicit reasoning. Building such systems is a full-time job in itself, and it doesn’t make any sense to write code for free, especially when that’s your primary skillset.</p>
+
+<p>Yet even their paid resources and courses are relatively sparse on how to build such things. You had to hire these people or someone like them as consultants to teach you or build them for you.</p>
+
+<p>That’s when I found <a href="https://eventide-project.org">Eventide</a>.</p>
+
+<h2 id="the-eventide-project">The Eventide Project</h2>
+
+<p>Co-founded by Scott Bellware and Nathan Ladd, the Eventide Project is a toolkit for building event sourced components or services in Ruby. Luckily, they provide examples of how to build services, though if you come from a purely Rails background, you may find their example projects to be a little esoteric and strange. Where’s the <code class="language-plaintext highlighter-rouge">app</code> directory? Where’s the <code class="language-plaintext highlighter-rouge">Rakefile</code>? Where’s <code class="language-plaintext highlighter-rouge">Gemfile.lock</code> and all the other things I expect to see in a Ruby project?</p>
+
+<p>You must set aside the notion that the Rails way is the <em>only way</em> in a Ruby project. Rails does not equal Ruby, yet the former may seem to encompass the entirety of what the latter has to offer. Nothing could be further from the truth!</p>
+
+<p>Eventide’s primary examples are an <a href="https://github.com/eventide-examples/account-component">account bank balance</a> and a <a href="https://github.com/eventide-examples/funds-transfer-component">funds transfer between two accounts</a>, which are great as a primer into Eventide. But not all web applications are banking applications, and so I think it might be useful to cover examples that most web developers might be familiar with.</p>
+
+<h2 id="user-registration">User Registration</h2>
+
+<p>User registration is one of those problems nearly every developer has to face, but like most problems always differs in the details. Perhaps you need to collect name, address, and other pertinent information. Maybe you just want an email address. And if you’re one of those people who have to deal with storing their own passwords, you have my deepest sympathies.</p>
+
+<p>For now, we’ll just deal with a simplified form of user registration and collect only an email address from a user. What I like to do is to start with the entity and work my way to the different messages, and then onto the projection and handler.</p>
+
+<h2 id="the-registration-entity">The Registration Entity</h2>
+
+<p>The <a href="http://docs.eventide-project.org/glossary.html#entity">entity</a> is a good place to start, because it allows you to see and develop the core logic of the business process in question, which in this case is the process by which our application registers users.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Registration</span>
+  <span class="kp">include</span> <span class="no">Schema</span><span class="o">::</span><span class="no">DataStructure</span>
+
+  <span class="n">attribute</span> <span class="ss">:id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:user_id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:email_address</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:registered_time</span><span class="p">,</span> <span class="no">Time</span>
+
+  <span class="k">def</span> <span class="nf">registered?</span>
+    <span class="o">!</span><span class="n">registered_time</span><span class="p">.</span><span class="nf">nil?</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The registration has an ID, which may be <code class="language-plaintext highlighter-rouge">registration_id</code> in other contexts. It also has an <code class="language-plaintext highlighter-rouge">email_address</code>, because that’s what we’re collecting; a <code class="language-plaintext highlighter-rouge">user_id</code> associated with the <code class="language-plaintext highlighter-rouge">email_address</code>; and a <code class="language-plaintext highlighter-rouge">registered_time</code>, or the time the user registered to our application. There’s also a predicate method called <code class="language-plaintext highlighter-rouge">registered?</code> to let us know if a Registration was previously registered. This has to do with enforcing idempotence, which I’ll talk about later.</p>
+
+<h2 id="wheres-the-user-model">Where’s the User Model?</h2>
+
+<p>Most object-oriented programmers try to “find the nouns”, but that can be fairly misleading. Services don’t model nouns, but instead model business processes. Especially in a language like Ruby, where the dominance of Rails colors any sort of thinking on the subject, nouns or models are tightly coupled with <code class="language-plaintext highlighter-rouge">ActiveRecord</code>, which means they’re coupled to ideas of database persistence.</p>
+
+<p>You can see this in Rails article after article on the subject of “service objects”, somehow implying that these “service objects” are different from normal objects. But objects are simply data structures tied to a specific behavior via their functions. So the word “service” in service object doesn’t impart any special meaning.</p>
+
+<p>Or you may think of the doctrine of “fat models, skinny controllers”, where you put all business logic pertaining to Users in the User model. That <em>seems</em> to be object-like, right? But Users aren’t a business process, and the User model is mostly about loading tuples from the database.</p>
+
+<p>You very well <em>might</em> have a User object, but keep in mind that the concept of User is malleable, depending on the context. If I was an admin viewing a report, I might have different functions or behaviors available to me regarding the concept of User than if I was that user and viewing my own profile. This is what you might see called <em>bounded context</em> in Domain Driven Design, though that’s beyond the scope of this essay.</p>
+
+<p>In any case, when I speak of business processes, I mean any process that helps facilitate your business. While that may be tautological, it means any process that helps you gain customers and keep those customers. This could be the collection of billing information, customer engagement with your platform, or as in this case user registration or sign ups.</p>
+
+<p>So instead of Rails models, we have an entity, which is an object that encompasses the entirety of the data attributes and logic needed to represent the registration business process. If it looks simple, that’s  because you don’t really need anything else.</p>
+
+<h2 id="messages">Messages</h2>
+
+<p>Now that we have our registration entity, we’ll want to address our <a href="http://docs.eventide-project.org/glossary.html#message">messages</a>. In service-oriented architecture, we pass messages back and forth through the medium of the message store. These can come in two kinds: commands and events. Commands are things you tell the service to do, while events are things that happened within the service.</p>
+
+<p>Let’s take a look at our command:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Register</span>
+  <span class="kp">include</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">Message</span>
+
+  <span class="n">attribute</span> <span class="ss">:registration_id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:user_id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:email_address</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:time</span><span class="p">,</span> <span class="no">String</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>And our event:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Registered</span>
+  <span class="kp">include</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">Message</span>
+
+  <span class="n">attribute</span> <span class="ss">:registration_id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:user_id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:email_address</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:time</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:processed_time</span><span class="p">,</span> <span class="no">String</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>They both look much the same as our entity, though without any business logic, just a bag of data attributes. The primary difference between command and event is that the event has the addition of a <code class="language-plaintext highlighter-rouge">processed_time</code> attribute. This lets us know when a component processed that particular message, which is different from the <code class="language-plaintext highlighter-rouge">time</code> attribute, which is the <em>effective</em> time of that event.</p>
+
+<p>If we think of our registration, the effective time a user registered to our application can be different from when our service processed that registration, because in an event sourced system messages are processed asynchronously.</p>
+
+<h2 id="projection">Projection</h2>
+
+<p><a href="http://docs.eventide-project.org/glossary.html#entity-projection">Projections</a> are used to construct an entity from a sequence of events. The projection for our registration is pretty simple, mostly because it applies only one event.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Projection</span>
+  <span class="kp">include</span> <span class="no">EntityProjection</span>
+  <span class="kp">include</span> <span class="no">Messages</span><span class="o">::</span><span class="no">Events</span>
+
+  <span class="n">entity_name</span> <span class="ss">:registration</span>
+
+  <span class="n">apply</span> <span class="no">Registered</span> <span class="k">do</span> <span class="o">|</span><span class="n">registered</span><span class="o">|</span>
+    <span class="n">registration</span><span class="p">.</span><span class="nf">id</span> <span class="o">=</span> <span class="n">registered</span><span class="p">.</span><span class="nf">registration_id</span>
+    <span class="n">registration</span><span class="p">.</span><span class="nf">user_id</span> <span class="o">=</span> <span class="n">registered</span><span class="p">.</span><span class="nf">user_id</span>
+    <span class="n">registration</span><span class="p">.</span><span class="nf">email_address</span> <span class="o">=</span> <span class="n">registered</span><span class="p">.</span><span class="nf">email_address</span>
+    <span class="n">registration</span><span class="p">.</span><span class="nf">registered_time</span> <span class="o">=</span> <span class="no">Clock</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">registered</span><span class="p">.</span><span class="nf">time</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>In many ways, software development is simply about copying or moving data from one place to another, and that is no different here. We’re copying the attributes of the event into the entity, with some parsing and data transformation.</p>
+
+<p>Note that when the Registered event is applied, the <code class="language-plaintext highlighter-rouge">registered_time</code> attribute becomes set, which means our <code class="language-plaintext highlighter-rouge">registered?</code> predicate from the Registration entity will go from <code class="language-plaintext highlighter-rouge">false</code> to <code class="language-plaintext highlighter-rouge">true</code>.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Registration</span>
+  <span class="c1">## ...</span>
+
+  <span class="k">def</span> <span class="nf">registered?</span>
+    <span class="o">!</span><span class="n">registered_time</span><span class="p">.</span><span class="nf">nil?</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="handler">Handler</h2>
+
+<p><a href="http://docs.eventide-project.org/glossary.html#handler">Handlers</a> are the most complicated part of the component, in my opinion, and require an understanding of what is going on behind the scenes, i.e. hidden within the framework code.</p>
+
+<p>The message store is an append-only log, with each tuple in that log representing a message, i.e. a command or an event. The component queries the message store for messages within a specific category and processes those messages sequentially. In this case, our handler is processing messages from the <code class="language-plaintext highlighter-rouge">registration:command</code> category, a category of command messages for the registration component.</p>
+
+<p>A category could have multiple streams, each one an individual entity. For example, <code class="language-plaintext highlighter-rouge">registration-123</code> and <code class="language-plaintext highlighter-rouge">registration-456</code> would represent different registration entities but belong to the same registration category.</p>
+
+<p>Let’s look at the code.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Handler</span>
+  <span class="kp">include</span> <span class="no">Log</span><span class="o">::</span><span class="no">Dependency</span>
+  <span class="kp">include</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">Handle</span>
+  <span class="kp">include</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">StreamName</span>
+
+  <span class="n">dependency</span> <span class="ss">:write</span><span class="p">,</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">Postgres</span><span class="o">::</span><span class="no">Write</span>
+  <span class="n">dependency</span> <span class="ss">:clock</span><span class="p">,</span> <span class="no">Clock</span><span class="o">::</span><span class="no">UTC</span>
+  <span class="n">dependency</span> <span class="ss">:store</span><span class="p">,</span> <span class="no">Store</span>
+
+  <span class="k">def</span> <span class="nf">configure</span>
+    <span class="no">Messaging</span><span class="o">::</span><span class="no">Postgres</span><span class="o">::</span><span class="no">Write</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+    <span class="no">Clock</span><span class="o">::</span><span class="no">UTC</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+    <span class="no">Store</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">category</span> <span class="ss">:registration</span>
+
+  <span class="n">handle</span> <span class="no">Register</span> <span class="k">do</span> <span class="o">|</span><span class="n">register</span><span class="o">|</span>
+    <span class="n">registration_id</span> <span class="o">=</span> <span class="n">register</span><span class="p">.</span><span class="nf">registration_id</span>
+
+    <span class="n">registration</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">store</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">registration_id</span><span class="p">,</span> <span class="ss">include: :version</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">registration</span><span class="p">.</span><span class="nf">registered?</span>
+      <span class="n">logger</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="ss">tag: :ignored</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"Command ignored (Command: </span><span class="si">#{</span><span class="n">register</span><span class="p">.</span><span class="nf">message_type</span><span class="si">}</span><span class="s2">, Registration ID: </span><span class="si">#{</span><span class="n">registration_id</span><span class="si">}</span><span class="s2">, User ID: </span><span class="si">#{</span><span class="n">register</span><span class="p">.</span><span class="nf">user_id</span><span class="si">}</span><span class="s2">)"</span> <span class="p">}</span>
+      <span class="k">return</span>
+    <span class="k">end</span>
+
+    <span class="n">time</span> <span class="o">=</span> <span class="n">clock</span><span class="p">.</span><span class="nf">iso8601</span>
+
+    <span class="n">stream_name</span> <span class="o">=</span> <span class="n">stream_name</span><span class="p">(</span><span class="n">registration_id</span><span class="p">)</span>
+
+    <span class="n">registered</span> <span class="o">=</span> <span class="no">Registered</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">register</span><span class="p">)</span>
+    <span class="n">registered</span><span class="p">.</span><span class="nf">processed_time</span> <span class="o">=</span> <span class="n">time</span>
+
+    <span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">registered</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">,</span> <span class="ss">expected_version: </span><span class="n">version</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>We have something very similar to the projection above, but the difference is that the projection reads events from a single stream within a category, while the handler reads messages from the entire category.</p>
+
+<p>The first few lines of the <code class="language-plaintext highlighter-rouge">Handler</code> class are dependencies. The <code class="language-plaintext highlighter-rouge">configure</code> method is especially interesting for Ruby code, but not something I’m going to go into this essay. Instead, let’s look at the <code class="language-plaintext highlighter-rouge">handle Register</code> block.</p>
+
+<p>The Registration entity is fetched using the <code class="language-plaintext highlighter-rouge">store</code> object. The store reads the events in the entity’s stream and feeds them into the projection, which moves the event message data into the entity.</p>
+
+<p>We can then use this registration entity to make business decisions with. Here we are using the <code class="language-plaintext highlighter-rouge">registered?</code> predicate to determine whether the registration entity was previously registered so as to avoid registering it again.</p>
+
+<h2 id="never-forget-idempotence">Never Forget Idempotence</h2>
+
+<p>Idempotence is the idea of processing messages more than once but actuating any side effects, i.e. writing to the database or calling external dependencies, only once.</p>
+
+<p>In all messaging systems, there is the very real possibility that messages will be processed more than once. This can occur in two forms. The first is because a service is restarted and messages that were already processed are processed again. The second is due to duplicate command messages. For example, two <code class="language-plaintext highlighter-rouge">Register</code> command messages with the exact same data attributes were erroneously written to the message store.</p>
+
+<p>Making handlers idempotent is important. If you’ve ever come across a system in the wild that disables the <code class="language-plaintext highlighter-rouge">Submit</code> button upon clicking or warns against clicking a button multiple times for fear of charging your payment information more than once, you’ve seen a system that is not idempotent.</p>
+
+<p>Here we use the <code class="language-plaintext highlighter-rouge">registered?</code> predicate to make sure that a <code class="language-plaintext highlighter-rouge">Registered</code> event is not written to the stream if it was already done so previously. This is because we project the stream prior to making any writes to the message store, so we have up to date information on the stream.</p>
+
+<h2 id="handler-continued">Handler, continued</h2>
+
+<p>The final block of code details writing the <code class="language-plaintext highlighter-rouge">Registered</code> event to the <code class="language-plaintext highlighter-rouge">registration-{registration_id}</code> stream.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Handler</span>
+  <span class="c1">## ...</span>
+
+  <span class="n">handle</span> <span class="no">Register</span> <span class="k">do</span> <span class="o">|</span><span class="n">register</span><span class="o">|</span>
+    <span class="n">registration_id</span> <span class="o">=</span> <span class="n">register</span><span class="p">.</span><span class="nf">registration_id</span>
+
+    <span class="n">registration</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">store</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">registration_id</span><span class="p">,</span> <span class="ss">include: :version</span><span class="p">)</span>
+
+    <span class="c1">## ...</span>
+
+    <span class="n">time</span> <span class="o">=</span> <span class="n">clock</span><span class="p">.</span><span class="nf">iso8601</span>
+
+    <span class="n">stream_name</span> <span class="o">=</span> <span class="n">stream_name</span><span class="p">(</span><span class="n">registration_id</span><span class="p">)</span>
+
+    <span class="n">registered</span> <span class="o">=</span> <span class="no">Registered</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">register</span><span class="p">)</span>
+    <span class="n">registered</span><span class="p">.</span><span class="nf">processed_time</span> <span class="o">=</span> <span class="n">time</span>
+
+    <span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">registered</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">,</span> <span class="ss">expected_version: </span><span class="n">version</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The first line sets <code class="language-plaintext highlighter-rouge">time</code> to the current time in ISO 8601 format. The next line sets the <code class="language-plaintext highlighter-rouge">stream_name</code> with a handy convenience method that concatenates the category name with the <code class="language-plaintext highlighter-rouge">registration_id</code> so you end up with <code class="language-plaintext highlighter-rouge">registration-{registration_id}</code>.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">follow</code> method is another one of those convenience methods provided by Eventide that copies all of the data attributes from the preceding message into the new message.</p>
+
+<p>Finally, we set the <code class="language-plaintext highlighter-rouge">processed_time</code> to the <code class="language-plaintext highlighter-rouge">time</code> variable discussed above and write the message to the message store.</p>
+
+<h2 id="what-about-concurrency">What about Concurrency!</h2>
+
+<p>One more thing I want to note is the <code class="language-plaintext highlighter-rouge">expected_version</code>. This is a form of optimistic locking and prevents our component from writing events to the stream concurrently. This could happen if there are two instances of the component running by mistake, for example, which we realistically don’t want to happen but need to protect against.</p>
+
+<p>When we first fetched the registration entity, we also received a <code class="language-plaintext highlighter-rouge">version</code>, which was the version number of the last message of the stream. When a message is written to the message store, each stream keeps track of the version of the event. The first event of the stream will be 0, while the next event will be 1, and so on sequentially. An empty stream will have a version of -1.</p>
+
+<p>Because we’ve fetched the version from the store, we can pass that version into the writer. This will check to make sure that the expected version of the stream, i.e. the version of the last event of the stream, matches what is passed in before writing the <code class="language-plaintext highlighter-rouge">Registered</code> event to the message store. If the expected version does not match, then a <code class="language-plaintext highlighter-rouge">MessageStore::ExpectedVersion::Error</code> exception will be raised, and the entire component will stop.</p>
+
+<p>Otherwise, the <code class="language-plaintext highlighter-rouge">Registered</code> event will be written to the message store, and the next message in the category will be processed.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>We’ve learned how to code the basic bones of an Eventide component, with the nominal use case of user registration. We’ve learned about entities, messages, projections, and handlers. We’ve made our handler idempotent and protected against concurrent writes.</p>
+
+<p>However, this component is still incomplete. When we think of the user registration use case, we want to make sure that people can’t sign up to our application with the same email address. In other words, we want email uniqueness. Yet, this component doesn’t take email uniqueness into account.</p>
+
+<p>Which is what I plan to discuss in the next part of this sequence.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/favorite-browser">&laquo; My Favorite Browser (Or Why It Doesn't Matter)</a>
+
+
+|
+
+
+  <a class="next" href="/technical-assessments-are-dumb">Technical Assessments Are Dumb &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>

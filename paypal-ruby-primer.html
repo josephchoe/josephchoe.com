@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>A PayPal Ruby primer | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/paypal-ruby-primer" />
+  <meta property="og:title" content="A PayPal Ruby primer | Joseph Choe" />
+  <meta property="og:description" content="One of the most common use cases in software development is consuming third party APIs. The details may differ, but overall you’ll always need some way to interface with an external dependency, no ..." />
+  <meta property="og:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="A PayPal Ruby primer | Joseph Choe" />
+  <meta name="twitter:description" content="One of the most common use cases in software development is consuming third party APIs. The details may differ, but overall you’ll always need some way to interface with an external dependency, no ..." />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="parent">
+    <a href="/essay" rel="tag">Essays</a>
+  </div>
+  <div class="title">
+    <h1>A PayPal Ruby primer</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Jan 8 2021</small>
+  </div>
+  <p>One of the most common use cases in software development is consuming third party APIs. The details may differ, but overall you’ll always need some way to interface with an external dependency, no matter your business. And if you’re in the e-commerce space, you’ll always need to collect money from your customers.</p>
+
+<p>One way to collect payments is to use PayPal. It’s fairly ubiquitous; customers are used to using PayPal, which means adding it to your own application will incur less friction, allowing your potential customers to become paying customers.</p>
+
+<h2 id="disclaimer">Disclaimer</h2>
+
+<p>This essay is a tool for learning. The code herein should not be used in a production environment, especially where actual money and customer data is involved. I strongly advise against copy and pasting the code into your own project, without fully understanding all of its implications. Be sure to read through to the end, and see how you can adapt it to your use case.</p>
+
+<h2 id="why-not-use-the-paypal-ruby-sdk">Why Not Use the PayPal Ruby SDK?</h2>
+
+<p>There are several reasons we might not wish to use <a href="https://github.com/paypal/Checkout-Ruby-SDK">PayPal’s official SDK</a>. The most important reason is that we want to learn how to use our programming language of choice, in this case Ruby, to do it ourselves. We may not be able to code a better solution than someone else already has, but we can at least learn a thing or two along the way.</p>
+
+<p>Using someone else’s code and their DSL, or domain-specific language, does not translate that learning to other parts of your system. Instead, you need to learn each new SDK separately, rather than knowing how HTTP requests work generally and applying that knowledge to solve whatever specific problem you have.</p>
+
+<p>Consider also that adding another dependency to your project may not be the best idea. Some third party projects may do things that you may not want to do. Perhaps they have a retry strategy that you don’t necessarily want in your own project. Perhaps they make calls asynchronously, and you want them to be single-threaded. When you use someone else’s code, you relinquish <strong>control</strong> over that part of your own system.</p>
+
+<h2 id="dependencies">Dependencies</h2>
+
+<p>I think it’s important to know what dependencies are being pulled into the code so that those reading later on down the line can make adjustments of their own. The Rails ecosystem makes it incredibly easy for this sort of information be opaque to the reader. For example, many developers think that the syntax for <code class="language-plaintext highlighter-rouge">1.second.ago</code> is pure Ruby, even though it’s really a monkey-patch from <code class="language-plaintext highlighter-rouge">ActiveSupport</code>. Therefore, I’ll be listing out dependencies for all these kinds of essays when its source is not incredibly obvious.</p>
+
+<p>For this essay, I’m using <a href="https://github.com/nahi/httpclient">HTTPClient</a> for HTTP requests mostly because it’s what I know. It’s written in pure Ruby and is pretty lightweight, with no external dependencies.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">Base64</code> and <code class="language-plaintext highlighter-rouge">JSON</code> modules are both part of the Ruby Standard Library.</p>
+
+<h2 id="create-a-developer-account">Create a Developer Account</h2>
+
+<p>To begin, we need to create a developer account on PayPal. I’m not really going to go into much detail on how to do that, as it’s far out of scope for this essay. Find out how to do that <a href="https://developer.paypal.com/docs/checkout/integrate/#1-set-up-your-development-environment">here</a>.</p>
+
+<p>However, once you have your developer account and created an application, or using the default application, we will need the application’s client ID and secret. Make sure you keep that in a safe place, as we’ll be using that very soon.</p>
+
+<h2 id="retrieve-an-access-token">Retrieve an Access Token</h2>
+
+<p>Our first step is to retrieve an <strong>access token</strong> by exchanging one for our client ID and secret. The PayPal REST API uses OAuth 2.0 for its integrations. Again, OAuth is outside the scope of this essay, but just know that in order to consume the necessary HTTP endpoints, we’ll need to exchange our client ID and secret for a temporary access token.</p>
+
+<p>Let’s first look at how PayPal <a href="https://developer.paypal.com/docs/api/get-an-access-token-curl/">demonstrates</a> this through the <code class="language-plaintext highlighter-rouge">cURL</code> command.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl h<span class="o">(</span>ttps://api-m.sandbox.paypal.com/v1/oauth2/token <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Accept: application/json"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Accept-Language: en_US"</span> <span class="se">\</span>
+  <span class="nt">-u</span> <span class="s2">"&lt;client_id&gt;:&lt;secret&gt;"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s2">"grant_type=client_credentials"</span>
+</code></pre></div></div>
+
+<p>The first part of the command begins with <code class="language-plaintext highlighter-rouge">http://api-m.sandbox.paypal.com</code>, which is the endpoint or location the resource can be found.</p>
+
+<p>Following that are a collection of arguments or parameters. The <code class="language-plaintext highlighter-rouge">-H</code> option stands for custom headers passed to the server. The <code class="language-plaintext highlighter-rouge">-u</code> option is another header passed to the server, but containing <strong>basic access authentication</strong>. In essence, it’s a simple username and password encoded in Base64.</p>
+
+<p>Finally, the <code class="language-plaintext highlighter-rouge">-d</code> option is the HTTP POST data payload, or the body of the request, passed to the server. In this case, it’s an attribute of <code class="language-plaintext highlighter-rouge">grant_type</code> with the value of <code class="language-plaintext highlighter-rouge">client_credentials</code>, letting the server know we are passing in a client ID and secret in exchange for an access token.</p>
+
+<p>Let’s take a look at the response from the server:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"scope"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"access_token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"token_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Bearer"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"app_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"expires_in"</span><span class="p">:</span><span class="w"> </span><span class="mi">32389</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"nonce"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>There’s quite a bit of information in this response, but what we really care about is the <code class="language-plaintext highlighter-rouge">access_token</code>. Remember the form this data takes, as we’ll be parsing this data in our code next.</p>
+
+<p>Here’s how we can translate the above <code class="language-plaintext highlighter-rouge">cURL</code> command into Ruby code.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'base64'</span>
+<span class="nb">require</span> <span class="s1">'httpclient'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="k">def</span> <span class="nf">retrieve_access_token</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">client_id</span><span class="p">,</span> <span class="n">client_secret</span><span class="p">)</span>
+  <span class="n">client</span> <span class="o">=</span> <span class="no">HTTPClient</span><span class="p">.</span><span class="nf">new</span>
+
+  <span class="n">authorization</span> <span class="o">=</span> <span class="no">Base64</span><span class="p">.</span><span class="nf">strict_encode64</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">client_id</span><span class="si">}</span><span class="s2">:</span><span class="si">#{</span><span class="n">client_secret</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+  <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"Accept"</span> <span class="o">=&gt;</span> <span class="s2">"application/json"</span><span class="p">,</span>
+    <span class="s2">"Accept-Language"</span> <span class="o">=&gt;</span> <span class="s2">"en_US"</span><span class="p">,</span>
+    <span class="s2">"Authorization"</span> <span class="o">=&gt;</span> <span class="s2">"Basic </span><span class="si">#{</span><span class="n">authorization</span><span class="si">}</span><span class="s2">"</span>
+  <span class="p">}</span>
+  <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"grant_type"</span> <span class="o">=&gt;</span> <span class="s2">"client_credentials"</span>
+  <span class="p">}</span>
+  <span class="n">uri</span> <span class="o">=</span> <span class="s2">"</span><span class="si">#{</span><span class="n">host</span><span class="si">}</span><span class="s2">/v1/oauth2/token"</span>
+
+  <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="ss">:header</span> <span class="o">=&gt;</span> <span class="n">headers</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="n">body</span><span class="p">)</span>
+
+  <span class="n">body</span> <span class="o">=</span> <span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">)</span>
+  <span class="n">access_token</span> <span class="o">=</span> <span class="n">body</span><span class="p">[</span><span class="s2">"access_token"</span><span class="p">]</span>
+  <span class="n">access_token</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>First, we declare our dependencies. Then, we have a function called <code class="language-plaintext highlighter-rouge">retrieve_access_token</code>, which accepts three parameters: a <code class="language-plaintext highlighter-rouge">host</code>, <code class="language-plaintext highlighter-rouge">client_id</code>, and <code class="language-plaintext highlighter-rouge">client_secret</code>.</p>
+
+<p>After instantiating the <code class="language-plaintext highlighter-rouge">HTTPClient</code> class, we encode in Base64 the <code class="language-plaintext highlighter-rouge">client_id</code> and <code class="language-plaintext highlighter-rouge">client_secret</code>. Then, we declare our request headers and body, which we then pass to the serve via POST. Note the similarities between this code and the above <code class="language-plaintext highlighter-rouge">cURL</code> command.</p>
+
+<p>Finally, upon receipt of the response, we parse for the <code class="language-plaintext highlighter-rouge">access_token</code>.</p>
+
+<h2 id="create-an-order">Create an Order</h2>
+
+<p>Now that we have the access token, we can create an order.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'httpclient'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="k">def</span> <span class="nf">create_order</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">access_token</span><span class="p">,</span> <span class="n">currency_code</span><span class="p">,</span> <span class="n">amount</span><span class="p">)</span>
+  <span class="n">client</span> <span class="o">=</span> <span class="no">HTTPClient</span><span class="p">.</span><span class="nf">new</span>
+
+  <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"Content-Type"</span> <span class="o">=&gt;</span> <span class="s2">"application/json"</span><span class="p">,</span>
+    <span class="s2">"Authorization"</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="n">access_token</span><span class="si">}</span><span class="s2">"</span>
+  <span class="p">}</span>
+  <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"intent"</span> <span class="o">=&gt;</span> <span class="s2">"CAPTURE"</span><span class="p">,</span>
+    <span class="s2">"purchase_units"</span> <span class="o">=&gt;</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="s2">"amount"</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="s2">"currency_code"</span> <span class="o">=&gt;</span> <span class="n">currency_code</span><span class="p">,</span>
+          <span class="s2">"value"</span> <span class="o">=&gt;</span> <span class="n">amount</span><span class="p">,</span>
+          <span class="s2">"breakdown"</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="s2">"item_total"</span> <span class="o">=&gt;</span> <span class="p">{</span>
+              <span class="s2">"currency_code"</span> <span class="o">=&gt;</span> <span class="n">currency_code</span><span class="p">,</span>
+              <span class="s2">"value"</span> <span class="o">=&gt;</span> <span class="n">amount</span><span class="p">,</span>
+            <span class="p">}</span>
+          <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">"descripton"</span><span class="p">:</span> <span class="s2">"This is a test description."</span><span class="p">,</span>
+        <span class="s2">"items"</span> <span class="o">=&gt;</span> <span class="p">[</span>
+          <span class="p">{</span>
+            <span class="s2">"name"</span> <span class="o">=&gt;</span> <span class="s2">"Test item"</span><span class="p">,</span>
+            <span class="s2">"unit_amount"</span> <span class="o">=&gt;</span> <span class="p">{</span>
+              <span class="s2">"currency_code"</span> <span class="o">=&gt;</span> <span class="n">currency_code</span><span class="p">,</span>
+              <span class="s2">"value"</span> <span class="o">=&gt;</span> <span class="n">amount</span>
+            <span class="p">},</span>
+            <span class="s2">"quantity"</span> <span class="o">=&gt;</span> <span class="s2">"1"</span><span class="p">,</span>
+            <span class="s2">"description"</span> <span class="o">=&gt;</span> <span class="s2">"This is a test description."</span><span class="p">,</span>
+            <span class="s2">"category"</span> <span class="o">=&gt;</span> <span class="s2">"DIGITAL_GOODS"</span>
+          <span class="p">}</span>
+        <span class="p">]</span>
+      <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">"application_context"</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="s2">"shipping_preference"</span> <span class="o">=&gt;</span> <span class="s2">"NO_SHIPPING"</span><span class="p">,</span>
+      <span class="s2">"user_action"</span> <span class="o">=&gt;</span> <span class="s2">"PAY_NOW"</span><span class="p">,</span>
+      <span class="s2">"return_url"</span> <span class="o">=&gt;</span> <span class="s2">"https://www.example.com/return"</span><span class="p">,</span>
+      <span class="s2">"cancel_url"</span> <span class="o">=&gt;</span> <span class="s2">"https://www.example.com/cancel"</span>
+    <span class="p">}</span>
+  <span class="p">}.</span><span class="nf">to_json</span>
+  <span class="n">uri</span> <span class="o">=</span> <span class="s2">"</span><span class="si">#{</span><span class="n">host</span><span class="si">}</span><span class="s2">/v2/checkout/orders"</span>
+
+  <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="ss">:header</span> <span class="o">=&gt;</span> <span class="n">headers</span><span class="p">,</span> <span class="ss">:body</span> <span class="o">=&gt;</span> <span class="n">body</span><span class="p">)</span>
+
+  <span class="n">body</span> <span class="o">=</span> <span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">)</span>
+
+  <span class="n">order_id</span> <span class="o">=</span> <span class="n">body</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+  <span class="n">approve_url</span> <span class="o">=</span> <span class="n">body</span><span class="p">[</span><span class="s2">"links"</span><span class="p">].</span><span class="nf">find</span> <span class="p">{</span> <span class="o">|</span><span class="n">link</span><span class="o">|</span> <span class="n">link</span><span class="p">[</span><span class="s2">"rel"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"approve"</span> <span class="p">}[</span><span class="s2">"href"</span><span class="p">]</span>
+
+  <span class="p">[</span><span class="n">order_id</span><span class="p">,</span> <span class="n">approve_url</span><span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>This is pretty straightforward. The only thing I’ll note here is the <code class="language-plaintext highlighter-rouge">application_context</code> being passed to the endpoint. This allows us to define the payment experience.</p>
+
+<p>For example, the <code class="language-plaintext highlighter-rouge">user_action</code> being defined as <code class="language-plaintext highlighter-rouge">PAY_NOW</code> sets the button to “Pay Now”, and the <code class="language-plaintext highlighter-rouge">return_url</code> and <code class="language-plaintext highlighter-rouge">cancel_url</code> allows us to set the specific URLs that PayPal will use in the event of a successful authorization and a canceled checkout, respectively.</p>
+
+<p>Let’s look at the response.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"07N75338Y32250734"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CREATED"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"links"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://api.sandbox.paypal.com/v2/checkout/orders/07N75338Y32250734"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"rel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"self"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://www.sandbox.paypal.com/checkoutnow?token=07N75338Y32250734"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"rel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"approve"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://api.sandbox.paypal.com/v2/checkout/orders/07N75338Y32250734"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"rel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"update"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"PATCH"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://api.sandbox.paypal.com/v2/checkout/orders/07N75338Y32250734/capture"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"rel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"capture"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"POST"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>We’ll need the <code class="language-plaintext highlighter-rouge">approve_url</code> to redirect the customer to that specific endpoint, so the customer can approve the transaction on PayPal. That’s why we’ve parsed and retrieved it within the function above.</p>
+
+<h2 id="get-customer-approval">Get Customer Approval</h2>
+
+<p>So this is the part where the customer interacts with PayPal, logs into their account, or enters their credit card information. Which is the entire point, as we don’t want to store any of that information on our own systems.</p>
+
+<p>The only thing you need to do here is to redirect the customer to the <code class="language-plaintext highlighter-rouge">approve_url</code>. After the customer is done here, they will be redirected to the <code class="language-plaintext highlighter-rouge">return_url</code> that was denoted in the <code class="language-plaintext highlighter-rouge">application_context</code> block in the previous invocation and in the following format:</p>
+
+<p><code class="language-plaintext highlighter-rouge">https://www.example.com/return?token={order_id}&amp;PayerID={payer_id}</code></p>
+
+<p>This will be a signal to your systems to capture the order, and since the <code class="language-plaintext highlighter-rouge">token</code> is the same as the <code class="language-plaintext highlighter-rouge">order_id</code>, you will know which order to begin capturing.</p>
+
+<h2 id="capture-an-order">Capture an Order</h2>
+
+<p>Capturing the order is simply you telling PayPal to begin the transaction to capture the funds with whatever financial instrument the customer defined previously during the customer approval phase.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'httpclient'</span>
+<span class="nb">require</span> <span class="s1">'json'</span>
+
+<span class="k">def</span> <span class="nf">capture_order</span><span class="p">(</span><span class="n">access_token</span><span class="p">,</span> <span class="n">order_id</span><span class="p">)</span>
+  <span class="n">client</span> <span class="o">=</span> <span class="no">HTTPClient</span><span class="p">.</span><span class="nf">new</span>
+
+  <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"Content-Type"</span> <span class="o">=&gt;</span> <span class="s2">"application/json"</span><span class="p">,</span>
+    <span class="s2">"Authorization"</span> <span class="o">=&gt;</span> <span class="s2">"Bearer </span><span class="si">#{</span><span class="n">access_token</span><span class="si">}</span><span class="s2">"</span>
+  <span class="p">}</span>
+  <span class="n">uri</span> <span class="o">=</span> <span class="s2">"</span><span class="si">#{</span><span class="n">host</span><span class="si">}</span><span class="s2">/v2/checkout/orders/</span><span class="si">#{</span><span class="n">order_id</span><span class="si">}</span><span class="s2">/capture"</span>
+
+  <span class="n">client</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="ss">:header</span> <span class="o">=&gt;</span> <span class="n">headers</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>You shouldn’t really need to do anything with the response, though you may find there’s a need for it. If that’s the case, here is an example response.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5MN996644D7434415"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"COMPLETED"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"purchase_units"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w">
+    </span><span class="nl">"reference_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"default"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"payments"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"captures"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w">
+        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"67P82586VY465894K"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"COMPLETED"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"amount"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"currency_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USD"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"100.00"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"final_capture"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"seller_protection"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ELIGIBLE"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"dispute_categories"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"ITEM_NOT_RECEIVED"</span><span class="p">,</span><span class="w"> </span><span class="s2">"UNAUTHORIZED_TRANSACTION"</span><span class="p">]</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"seller_receivable_breakdown"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"gross_amount"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"currency_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USD"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"100.00"</span><span class="w">
+          </span><span class="p">},</span><span class="w">
+          </span><span class="nl">"paypal_fee"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"currency_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USD"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3.20"</span><span class="w">
+          </span><span class="p">},</span><span class="w">
+          </span><span class="nl">"net_amount"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"currency_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USD"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"96.80"</span><span class="w">
+          </span><span class="p">}</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nl">"links"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w">
+          </span><span class="nl">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://api.sandbox.paypal.com/v2/payments/captures/67P82586VY465894K"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"rel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"self"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="w">
+        </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://api.sandbox.paypal.com/v2/payments/captures/67P82586VY465894K/refund"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"rel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"refund"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"POST"</span><span class="w">
+        </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://api.sandbox.paypal.com/v2/checkout/orders/5MN996644D7434415"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"rel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"up"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="w">
+        </span><span class="p">}],</span><span class="w">
+        </span><span class="nl">"create_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-12-11T20:59:05Z"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"update_time"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2020-12-11T20:59:05Z"</span><span class="w">
+      </span><span class="p">}]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}],</span><span class="w">
+  </span><span class="nl">"payer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"given_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"John"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"surname"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Doe"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"email_address"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sb-qw5wy3825636@personal.example.com"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"payer_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"LFZYNHJ33WQNL"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"country_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"US"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"links"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w">
+    </span><span class="nl">"href"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://api.sandbox.paypal.com/v2/checkout/orders/5MN996644D7434415"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"rel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"self"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GET"</span><span class="w">
+  </span><span class="p">}]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>And with that, you’re done!</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>As you can see, consuming PayPal endpoints is not very difficult at all, and in fact, you could say that this was not just a PayPal Ruby primer but a lesson in how to consume HTTP endpoints in general. With this knowledge in hand, you will be able to consume other third party HTTP endpoints with relative ease.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/to-begin-anew">&laquo; To Begin Anew</a>
+
+
+|
+
+
+  <a class="next" href="/no-smartphone">Why I Don't Have a Smartphone &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>

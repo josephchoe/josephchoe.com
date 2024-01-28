@@ -50,6 +50,14 @@ https://guides.library.illinois.edu/data_encryption/gpgcheatsheet
 ## Examples
 
 ```bash
-echo “Text” | gpg -ear jane@example.com
+# encrypt message
+echo -n “Text” | gpg -ear jane@example.com
+
+# sign and encrypt message
+echo -n “Text” | gpg -sear jane@example.com
+
+# decrypt message to stdout
+gpg -d test.asc
+
 ```
 {% endif %}

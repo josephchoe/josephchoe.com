@@ -2,6 +2,9 @@
 
 set -e
 
+unset C_INCLUDE_PATH
+export MAKE=gmake
+
 echo "Removing gems directory..."
 rm -rf gems
 echo "Removing vendor directory..."

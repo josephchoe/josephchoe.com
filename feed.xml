@@ -1,0 +1,2601 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Joseph Choe</title>
+  <subtitle>I think about software development, writing, and many other things.</subtitle>
+  <updated>2024-06-15T09:47:40-06:00</updated>
+  <id>https://josephchoe.com/</id><link rel="alternate" type="text/html" hreflang="en" href="https://josephchoe.com/" />
+  <link rel="self" type="application/atom+xml" href="https://josephchoe.com/feed.xml" />
+
+  <author>
+    <name>Joseph Choe</name>
+    <uri>https://josephchoe.com</uri>
+    <email>joseph@josephchoe.com</email>
+  </author>
+
+  
+    
+      
+
+      <entry>
+        <title>The Hyperstack!</title>
+        <id>https://josephchoe.com/hyperstack</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/hyperstack" />
+        <published>2024-05-03T07:00:00-06:00</published>
+
+        
+          <updated>2024-05-03T08:12:46-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;About a year ago I talked about developing my own &lt;a href=&quot;/technology&quot;&gt;personal technology&lt;/a&gt;.
+I wanted a codebase or foundation on which to build, well, literally anything.
+Something I could take with me wherever I went.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>About a year ago I talked about developing my own personal technology.I wanted a codebase or foundation on which to build, well, literally anything.Something I could take with me wherever I went.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Bending cmixer to my will!</title>
+        <id>https://josephchoe.com/cmixer</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/cmixer" />
+        <published>2023-05-26T07:00:00-06:00</published>
+
+        
+          <updated>2023-05-25T04:23:13-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;No program can defy me for long!&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>No program can defy me for long!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Personal Technology</title>
+        <id>https://josephchoe.com/technology</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/technology" />
+        <published>2023-05-12T07:00:00-06:00</published>
+
+        
+          <updated>2023-05-12T04:19:41-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Over the last few months, perhaps even years, a single thought has loomed before me.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Over the last few months, perhaps even years, a single thought has loomed before me.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>The Plaintext Web</title>
+        <id>https://josephchoe.com/plaintext-web</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/plaintext-web" />
+        <published>2023-05-05T07:00:00-06:00</published>
+
+        
+          <updated>2023-05-03T18:57:21-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Will the Plaintext Web finally disappear?&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Will the Plaintext Web finally disappear?</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Building a Dictionary CLI!</title>
+        <id>https://josephchoe.com/dictionary</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/dictionary" />
+        <published>2023-04-28T07:00:00-06:00</published>
+
+        
+          <updated>2023-04-17T22:41:00-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I’ve been wanting to build a dictionary utility on the terminal, so I did!&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I’ve been wanting to build a dictionary utility on the terminal, so I did!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Why I&apos;ve Never Owned a Smartphone</title>
+        <id>https://josephchoe.com/never-smartphone</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/never-smartphone" />
+        <published>2023-04-21T07:00:00-06:00</published>
+
+        
+          <updated>2023-04-17T22:40:48-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I’ve never owned a smartphone, and I never will.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I’ve never owned a smartphone, and I never will.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Filtering Mail with Ruby!</title>
+        <id>https://josephchoe.com/smtpd-filters-ruby</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/smtpd-filters-ruby" />
+        <published>2023-04-14T07:00:00-06:00</published>
+
+        
+          <updated>2023-04-12T13:11:19-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I thought it might be interesting to demonstrate the smtpd-filters protocol with Ruby!&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I thought it might be interesting to demonstrate the smtpd-filters protocol with Ruby!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>ksh job control!</title>
+        <id>https://josephchoe.com/ksh-job-control</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/ksh-job-control" />
+        <published>2023-04-07T07:00:00-06:00</published>
+
+        
+          <updated>2023-04-12T12:44:01-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;If you learn one thing, learn to control your jobs!&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>If you learn one thing, learn to control your jobs!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>runit with control!</title>
+        <id>https://josephchoe.com/runit-with-control</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/runit-with-control" />
+        <published>2023-03-31T07:00:00-06:00</published>
+
+        
+          <updated>2023-03-22T15:10:26-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Let’s keep control of our systems—with runit!&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Let’s keep control of our systems—with runit!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>runit with snooze!</title>
+        <id>https://josephchoe.com/runit-with-snooze</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/runit-with-snooze" />
+        <published>2023-03-24T07:00:00-06:00</published>
+
+        
+          <updated>2023-03-22T15:10:14-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;A year or two ago, I built a cron scheduler Ruby. Here’s how you do the same thing—with runit!&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>A year or two ago, I built a cron scheduler Ruby. Here’s how you do the same thing—with runit!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>runit with logging!</title>
+        <id>https://josephchoe.com/runit-with-logging</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/runit-with-logging" />
+        <published>2023-03-17T07:00:00-06:00</published>
+
+        
+          <updated>2023-03-15T22:33:29-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Sometimes you want to add logging to your services. Here’s how you do it with runit!&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Sometimes you want to add logging to your services. Here’s how you do it with runit!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Running with runit!</title>
+        <id>https://josephchoe.com/running-with-runit</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/running-with-runit" />
+        <published>2023-03-10T06:00:00-07:00</published>
+
+        
+          <updated>2023-03-08T14:27:27-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I write and run quite a few services! Here’s how I do it—with runit!&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I write and run quite a few services! Here’s how I do it—with runit!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Automated Build Systems with fwa!</title>
+        <id>https://josephchoe.com/automated-build-systems-with-fwa</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/automated-build-systems-with-fwa" />
+        <published>2023-03-03T06:00:00-07:00</published>
+
+        
+          <updated>2023-03-08T14:16:12-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Building your own build systems is always the best way!&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Building your own build systems is always the best way!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Writing My Book with LaTeX!</title>
+        <id>https://josephchoe.com/writing-my-book-with-latex</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/writing-my-book-with-latex" />
+        <published>2023-02-17T06:00:00-07:00</published>
+
+        
+          <updated>2023-02-14T20:26:05-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Writing a book was the difficult part. Here’s how I made it easy for myself.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Writing a book was the difficult part. Here’s how I made it easy for myself.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Scheduling with at!</title>
+        <id>https://josephchoe.com/scheduling-with-at</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/scheduling-with-at" />
+        <published>2023-02-03T06:00:00-07:00</published>
+
+        
+          <updated>2023-01-31T17:43:43-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Sometimes you just want to schedule something…&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Sometimes you just want to schedule something…</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>The Speedmaster</title>
+        <id>https://josephchoe.com/speedmaster</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/speedmaster" />
+        <published>2023-01-24T06:00:00-07:00</published>
+
+        
+          <updated>2023-01-24T09:05:41-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I decided to purchase another watch for myself. I’ve had my eye on the Omega Speedmaster Professional for many long years now.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I decided to purchase another watch for myself. I’ve had my eye on the Omega Speedmaster Professional for many long years now.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Notifications with herbe!</title>
+        <id>https://josephchoe.com/notifications-with-herbe</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/notifications-with-herbe" />
+        <published>2023-01-20T06:00:00-07:00</published>
+
+        
+          <updated>2023-02-14T20:16:37-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I try to avoid overcomplicating my system too much, which is why I chose herbe for notifications!&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I try to avoid overcomplicating my system too much, which is why I chose herbe for notifications!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>UPDATE: Compiling Ruby from Source!</title>
+        <id>https://josephchoe.com/update-compiling-ruby-from-source</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/update-compiling-ruby-from-source" />
+        <published>2023-01-06T06:00:00-07:00</published>
+
+        
+          <updated>2023-01-08T12:34:53-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;A few months after posting my earlier video on compiling Ruby from source, the knowledge therein became obsolete. Here’s why!&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>A few months after posting my earlier video on compiling Ruby from source, the knowledge therein became obsolete. Here’s why!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>A Year of New</title>
+        <id>https://josephchoe.com/year-of-new</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/year-of-new" />
+        <published>2022-12-31T06:00:00-07:00</published>
+
+        
+          <updated>2022-12-31T06:50:09-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;&lt;a href=&quot;/year-of-writing&quot;&gt;Last year&lt;/a&gt; I compiled a list of resolutions I’d had for the year. I thought I’d do it again this year.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Last year I compiled a list of resolutions I’d had for the year. I thought I’d do it again this year.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Extracting URLs with urlview!</title>
+        <id>https://josephchoe.com/urlview</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/urlview" />
+        <published>2022-12-02T06:00:00-07:00</published>
+
+        
+          <updated>2022-11-29T10:36:06-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Here’s how I extract URLs from Maildir files like in my mail inbox or in my RSS feeds.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Here’s how I extract URLs from Maildir files like in my mail inbox or in my RSS feeds.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>The Slow Watch</title>
+        <id>https://josephchoe.com/slow-watch</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/slow-watch" />
+        <published>2022-11-22T06:00:00-07:00</published>
+
+        
+          <updated>2022-11-14T18:45:50-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;My wife gifted me a &lt;a href=&quot;https://slow-watches.com/product/slow-round-12/&quot;&gt;slow watch&lt;/a&gt; a few weeks ago.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>My wife gifted me a slow watch a few weeks ago.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>OpenBSD on a Proxmox VM!</title>
+        <id>https://josephchoe.com/proxmox-openbsd</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/proxmox-openbsd" />
+        <published>2022-11-18T06:00:00-07:00</published>
+
+        
+          <updated>2022-11-26T22:38:32-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Here’s how I install OpenBSD onto a Proxmox virtual machine!&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Here’s how I install OpenBSD onto a Proxmox virtual machine!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>RSS with sfeed, fdm, and mblaze!</title>
+        <id>https://josephchoe.com/rss-terminal</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/rss-terminal" />
+        <published>2022-11-04T07:00:00-06:00</published>
+
+        
+          <updated>2023-04-05T02:28:13-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Here’s how I subscribe and consume content via RSS (or Atom) on the terminal, with sfeed, fdm, and mblaze!&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Here’s how I subscribe and consume content via RSS (or Atom) on the terminal, with sfeed, fdm, and mblaze!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>On Reading Thirteen Witches - The Memory Thief</title>
+        <id>https://josephchoe.com/thirteen-witches-memory-thief</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/thirteen-witches-memory-thief" />
+        <published>2022-07-20T07:00:00-06:00</published>
+
+        
+          <updated>2022-07-19T13:49:02-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;&lt;em&gt;The Memory Thief&lt;/em&gt;, part of the &lt;em&gt;Thirteen Witches&lt;/em&gt; series, was written by &lt;a href=&quot;https://jodilynnanderson.com&quot;&gt;Jodi Lynn Anderson&lt;/a&gt;. It is simply an amazing story. I read this book in late May, but I thought I’d share it now since I was thinking about it.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>The Memory Thief, part of the Thirteen Witches series, was written by Jodi Lynn Anderson. It is simply an amazing story. I read this book in late May, but I thought I’d share it now since I was thinking about it.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Mail with OpenSMTPD, fdm, and mblaze!</title>
+        <id>https://josephchoe.com/mail</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/mail" />
+        <published>2022-07-08T07:00:00-06:00</published>
+
+        
+          <updated>2022-07-05T08:53:42-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Here’s how I view and send mail on the command line, with OpenSMTPD, fdm, and mblaze!&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Here’s how I view and send mail on the command line, with OpenSMTPD, fdm, and mblaze!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>A Year of Writing</title>
+        <id>https://josephchoe.com/year-of-writing</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/year-of-writing" />
+        <published>2021-12-31T07:00:00-07:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;This year was a bit of an odd one for me.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>This year was a bit of an odd one for me.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>OpenSMTPD on the Local Network</title>
+        <id>https://josephchoe.com/opensmtpd-local-network</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/opensmtpd-local-network" />
+        <published>2021-12-24T07:00:00-07:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;One of the many great things about OpenBSD is that it comes with OpenSMTPD by default, allowing my servers to communicate with themselves and each other via the SMTP protocol. This is used to send insecurity reports, failed cron jobs, et cetera to various users on the system.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>One of the many great things about OpenBSD is that it comes with OpenSMTPD by default, allowing my servers to communicate with themselves and each other via the SMTP protocol. This is used to send insecurity reports, failed cron jobs, et cetera to various users on the system.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Dynamic DNS</title>
+        <id>https://josephchoe.com/dynamic-dns</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/dynamic-dns" />
+        <published>2021-12-17T07:00:00-07:00</published>
+
+        
+          <updated>2021-12-22T01:24:34-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I’ve been self-hosting some services on my &lt;a href=&quot;/infrastructure&quot;&gt;homelab&lt;/a&gt;. However, since I don’t have a static IP through my Internet service provider, I need some sort of dynamic DNS script that will update the requisite A record on my name server.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I’ve been self-hosting some services on my homelab. However, since I don’t have a static IP through my Internet service provider, I need some sort of dynamic DNS script that will update the requisite A record on my name server.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Company Loyalty</title>
+        <id>https://josephchoe.com/loyalty</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/loyalty" />
+        <published>2021-12-10T07:00:00-07:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;There are so many stories nowadays about the loyalty a person owes to another, whether that be to family or to their company. Most of these stories are about that loyalty being betrayed in some way, but the language around these stories sticks with me and gives me pause.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>There are so many stories nowadays about the loyalty a person owes to another, whether that be to family or to their company. Most of these stories are about that loyalty being betrayed in some way, but the language around these stories sticks with me and gives me pause.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>WireGuard on OpenBSD</title>
+        <id>https://josephchoe.com/wireguard</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/wireguard" />
+        <published>2021-12-03T07:00:00-07:00</published>
+
+        
+          <updated>2021-12-03T08:03:37-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I’ll be traveling a bit next year, and when I do I’ll want to have access to my &lt;a href=&quot;/infrastructure&quot;&gt;homelab&lt;/a&gt; and all the services therein.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I’ll be traveling a bit next year, and when I do I’ll want to have access to my homelab and all the services therein.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Compiling Ruby from Source</title>
+        <id>https://josephchoe.com/compiling-ruby-from-source</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/compiling-ruby-from-source" />
+        <published>2021-11-26T07:00:00-07:00</published>
+
+        
+          <updated>2021-11-23T01:04:29-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Despite the prevalence of rbenv or rvm in the Ruby development space, everyone should know and understand how to compile Ruby directly from the source code.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Despite the prevalence of rbenv or rvm in the Ruby development space, everyone should know and understand how to compile Ruby directly from the source code.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Outage</title>
+        <id>https://josephchoe.com/outage</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/outage" />
+        <published>2021-11-19T07:00:00-07:00</published>
+
+        
+          <updated>2022-11-14T18:45:25-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;About two years ago, the company I worked for had an incident that shut down service to our main website and application for nearly 24 hours. Even when service was restored, the application suffered degrading performance problems for several weeks after that.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>About two years ago, the company I worked for had an incident that shut down service to our main website and application for nearly 24 hours. Even when service was restored, the application suffered degrading performance problems for several weeks after that.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Exploring Ruby CGI</title>
+        <id>https://josephchoe.com/exploring-ruby-cgi</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/exploring-ruby-cgi" />
+        <published>2021-11-12T07:00:00-07:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Lately, I’ve been thinking about how Ruby web applications are deployed.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Lately, I’ve been thinking about how Ruby web applications are deployed.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Provisioning an NTP Server</title>
+        <id>https://josephchoe.com/openntpd</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/openntpd" />
+        <published>2021-11-05T08:00:00-06:00</published>
+
+        
+          <updated>2021-12-15T12:09:01-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;One of the first things I did upon receiving my new &lt;a href=&quot;/framework&quot;&gt;Framework laptop&lt;/a&gt; was to provision a personal NTP server.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>One of the first things I did upon receiving my new Framework laptop was to provision a personal NTP server.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Installing OpenBSD on a Proxmox VM</title>
+        <id>https://josephchoe.com/openbsd-proxmox</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/openbsd-proxmox" />
+        <published>2021-10-29T08:00:00-06:00</published>
+
+        
+          <updated>2021-11-11T01:55:59-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I’ve been playing around with operating systems lately that I wouldn’t have before building out my new &lt;a href=&quot;/infrastructure&quot;&gt;infrastructure&lt;/a&gt;.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I’ve been playing around with operating systems lately that I wouldn’t have before building out my new infrastructure.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>The New Framework</title>
+        <id>https://josephchoe.com/framework</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/framework" />
+        <published>2021-10-22T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I purchased a new &lt;a href=&quot;https://frame.work&quot;&gt;Framework laptop&lt;/a&gt;.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I purchased a new Framework laptop.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Foundering Down to the Ground</title>
+        <id>https://josephchoe.com/foundering</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/foundering" />
+        <published>2021-10-15T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I was once a co-founder of a startup.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I was once a co-founder of a startup.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Punitive Measures</title>
+        <id>https://josephchoe.com/punitive-measures</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/punitive-measures" />
+        <published>2021-10-08T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Facebook’s little mishap this week prompted the joke that some poor network engineer might be getting fired for mishandling a configuration file.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Facebook’s little mishap this week prompted the joke that some poor network engineer might be getting fired for mishandling a configuration file.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>A Better Technical Interview</title>
+        <id>https://josephchoe.com/better-technical-interview</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/better-technical-interview" />
+        <published>2021-10-01T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;A little over six months ago, I wrote an essay about how &lt;a href=&quot;/technical-assessments-are-dumb&quot;&gt;technical assessments are dumb&lt;/a&gt;. And that’s still true.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>A little over six months ago, I wrote an essay about how technical assessments are dumb. And that’s still true.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Developer Error</title>
+        <id>https://josephchoe.com/developer-error</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/developer-error" />
+        <published>2021-09-24T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;There arose a situation this week where two developers discussed a design that I was sure was a mistake. As I sat there listening, I wondered whether I should continue to &lt;a href=&quot;/farming-metaphor&quot;&gt;observe&lt;/a&gt; or if I should intervene in some way.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>There arose a situation this week where two developers discussed a design that I was sure was a mistake. As I sat there listening, I wondered whether I should continue to observe or if I should intervene in some way.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Lessons Learned Making Videos</title>
+        <id>https://josephchoe.com/lessons-learned</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/lessons-learned" />
+        <published>2021-09-17T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I started making &lt;a href=&quot;/video&quot;&gt;videos&lt;/a&gt; in June, began posting them in July, and then took a break in September.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I started making videos in June, began posting them in July, and then took a break in September.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Farming Metaphor</title>
+        <id>https://josephchoe.com/farming-metaphor</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/farming-metaphor" />
+        <published>2021-09-10T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;About a year or two ago, I started watching a lot of YouTube farming or homestead videos.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>About a year or two ago, I started watching a lot of YouTube farming or homestead videos.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Personal Infrastructure</title>
+        <id>https://josephchoe.com/infrastructure</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/infrastructure" />
+        <published>2021-09-03T08:00:00-06:00</published>
+
+        
+          <updated>2021-09-21T10:17:58-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Homelabs are one of those things that quickly spiral out of control.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Homelabs are one of those things that quickly spiral out of control.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Building a Cron Scheduler</title>
+        <id>https://josephchoe.com/building-a-cron-scheduler</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/building-a-cron-scheduler" />
+        <published>2021-08-27T08:00:00-06:00</published>
+
+        
+          <updated>2021-08-17T08:52:28-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Using the Actor model of concurrent computation, I build a cron scheduler in Ruby intended to be a single lightweight process within a larger distributed system, its only purpose to schedule work that other processes on other larger server instances complete.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Using the Actor model of concurrent computation, I build a cron scheduler in Ruby intended to be a single lightweight process within a larger distributed system, its only purpose to schedule work that other processes on other larger server instances complete.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Deploying Eventide to Heroku</title>
+        <id>https://josephchoe.com/deploying-eventide-to-heroku</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/deploying-eventide-to-heroku" />
+        <published>2021-08-20T08:00:00-06:00</published>
+
+        
+          <updated>2021-08-12T21:24:03-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Eventide is a great tool for building evented, autonomous services, while Heroku allows developers to get projects deployed with very little fuss. This week I show how to deploy Eventide onto a Heroku dyno with very minimal hassle.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Eventide is a great tool for building evented, autonomous services, while Heroku allows developers to get projects deployed with very little fuss. This week I show how to deploy Eventide onto a Heroku dyno with very minimal hassle.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Building a Welcome Email Part 2</title>
+        <id>https://josephchoe.com/welcome-email-part-2</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/welcome-email-part-2" />
+        <published>2021-08-13T08:00:00-06:00</published>
+
+        
+          <updated>2021-08-04T07:07:13-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;In this two-part tutorial sequence, I build upon the earlier event sourcing tutorial and develop welcome emails as a part of the application. Continuing in Part 2, I build a component that will subscribe to the registration component and send welcome emails to users that have registered with the application, even to ones that signed up before the development of this feature.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>In this two-part tutorial sequence, I build upon the earlier event sourcing tutorial and develop welcome emails as a part of the application. Continuing in Part 2, I build a component that will subscribe to the registration component and send welcome emails to users that have registered with the application, even to ones that signed up before the development of this feature.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Building a Welcome Email Part 1</title>
+        <id>https://josephchoe.com/welcome-email-part-1</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/welcome-email-part-1" />
+        <published>2021-08-06T08:00:00-06:00</published>
+
+        
+          <updated>2021-08-04T02:02:02-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;With this two-part tutorial sequence, I build upon my earlier event sourcing tutorial and develop welcome emails as a part of the application. In Part 1, I show how to create an SMTP package that we can control, observe, and test, which I will then use next week to build the welcome email component.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>With this two-part tutorial sequence, I build upon my earlier event sourcing tutorial and develop welcome emails as a part of the application. In Part 1, I show how to create an SMTP package that we can control, observe, and test, which I will then use next week to build the welcome email component.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Rack Data Validation</title>
+        <id>https://josephchoe.com/rack-data-validation</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/rack-data-validation" />
+        <published>2021-07-30T08:00:00-06:00</published>
+
+        
+          <updated>2021-07-29T02:16:33-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Continuing my earlier tutorial on event sourcing, I demonstrate how to validate data on the registration resource.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Continuing my earlier tutorial on event sourcing, I demonstrate how to validate data on the registration resource.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Personal Ruby Development Environment</title>
+        <id>https://josephchoe.com/ruby-development</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/ruby-development" />
+        <published>2021-07-23T08:00:00-06:00</published>
+
+        
+          <updated>2021-07-19T09:31:02-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Managing multiple different Ruby projects can be daunting. Here’s how I manage my personal Ruby development environment with chruby, ruby-install, and bundle –standalone.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Managing multiple different Ruby projects can be daunting. Here’s how I manage my personal Ruby development environment with chruby, ruby-install, and bundle –standalone.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Rack - The BEST Ruby Web Framework</title>
+        <id>https://josephchoe.com/rack-the-best-ruby-web-framework</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/rack-the-best-ruby-web-framework" />
+        <published>2021-07-16T08:00:00-06:00</published>
+
+        
+          <updated>2021-07-16T08:51:01-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;You should definitely learn to use Rack if you’re a Ruby developer.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>You should definitely learn to use Rack if you’re a Ruby developer.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Event Sourcing - Snapshots</title>
+        <id>https://josephchoe.com/event-sourcing-snapshots</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/event-sourcing-snapshots" />
+        <published>2021-07-09T08:00:00-06:00</published>
+
+        
+          <updated>2021-07-07T12:58:57-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;What do you do if you have a million messages in an event sourced system? Use snapshots to store a stream’s state and optimize performance for your services and components.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>What do you do if you have a million messages in an event sourced system? Use snapshots to store a stream’s state and optimize performance for your services and components.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Event Sourcing Tutorial in Ruby</title>
+        <id>https://josephchoe.com/event-sourcing-tutorial</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/event-sourcing-tutorial" />
+        <published>2021-07-02T08:00:00-06:00</published>
+
+        
+          <updated>2021-07-07T12:58:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Learn how to build an event sourced web application in Ruby from start to finish.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Learn how to build an event sourced web application in Ruby from start to finish.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Work in Progress: June 2021</title>
+        <id>https://josephchoe.com/wip-june-2021</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/wip-june-2021" />
+        <published>2021-06-25T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Instead of writing something this week, I thought I might share what I’ve been working on for the last few months.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Instead of writing something this week, I thought I might share what I’ve been working on for the last few months.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Personal Tech Stack</title>
+        <id>https://josephchoe.com/tech-stack</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/tech-stack" />
+        <published>2021-06-18T08:00:00-06:00</published>
+
+        
+          <updated>2022-11-28T10:16:50-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Most of the time when I work on a project, someone has already decided what technologies to use. They made choices I would not have necessarily made. I wouldn’t say they were wrong choices, only that my preferences lie elsewhere.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Most of the time when I work on a project, someone has already decided what technologies to use. They made choices I would not have necessarily made. I wouldn’t say they were wrong choices, only that my preferences lie elsewhere.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Full Capacity</title>
+        <id>https://josephchoe.com/full-capacity</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/full-capacity" />
+        <published>2021-06-11T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I’ve had the grave misfortune to work for companies that believed that software developers needed to be utilized at 100% capacity in order to maximize their value and efficiency.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I’ve had the grave misfortune to work for companies that believed that software developers needed to be utilized at 100% capacity in order to maximize their value and efficiency.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Overtime</title>
+        <id>https://josephchoe.com/overtime</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/overtime" />
+        <published>2021-06-04T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;This past year has been somewhat a reckoning for me, as I’ve started to rethink some of the most basic assumptions I had about the software development profession, like how &lt;a href=&quot;/technical-assessments-are-dumb&quot;&gt;technical assessments are nothing more than pointless ritual&lt;/a&gt;.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>This past year has been somewhat a reckoning for me, as I’ve started to rethink some of the most basic assumptions I had about the software development profession, like how technical assessments are nothing more than pointless ritual.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Sucker Punch</title>
+        <id>https://josephchoe.com/sucker-punch</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/sucker-punch" />
+        <published>2021-05-28T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;This is a story from over a decade ago, when I was but a junior developer fresh out of college.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>This is a story from over a decade ago, when I was but a junior developer fresh out of college.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Allergies</title>
+        <id>https://josephchoe.com/allergies</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/allergies" />
+        <published>2021-05-21T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;My allergies used to be a huge problem.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>My allergies used to be a huge problem.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Don&apos;t Repeat Yourself</title>
+        <id>https://josephchoe.com/dont-repeat-yourself</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/dont-repeat-yourself" />
+        <published>2021-05-14T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Despite the title, this log is &lt;strong&gt;not&lt;/strong&gt; about that well-known software development principle. I have thoughts about that particular principle and its damage on software development as a whole, but I’ll save that particular essay for another time, if I write it at all.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Despite the title, this log is not about that well-known software development principle. I have thoughts about that particular principle and its damage on software development as a whole, but I’ll save that particular essay for another time, if I write it at all.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Not Just a Code Monkey</title>
+        <id>https://josephchoe.com/code-monkey</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/code-monkey" />
+        <published>2021-05-07T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I’m always more than a little baffled by the inherent contradictions in software development.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I’m always more than a little baffled by the inherent contradictions in software development.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Event Sourcing, Part 4: View Data</title>
+        <id>https://josephchoe.com/event-sourcing-part-4</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/event-sourcing-part-4" />
+        <published>2021-04-30T08:00:00-06:00</published>
+
+        
+          <updated>2021-12-24T02:11:35-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Be sure to check out my 11+ hour video tutorial on &lt;a href=&quot;/event-sourcing-tutorial&quot;&gt;event sourcing&lt;/a&gt;!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>  Note: Be sure to check out my 11+ hour video tutorial on event sourcing!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>The Plug and Chug Developer Mentality</title>
+        <id>https://josephchoe.com/plug-and-chug</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/plug-and-chug" />
+        <published>2021-04-23T08:00:00-06:00</published>
+
+        
+          <updated>2021-06-01T10:29:30-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;A couple of weeks ago, I wrote about my reservations with &lt;a href=&quot;/trust&quot;&gt;trusting open source&lt;/a&gt;. But I think what’s even more funny is how developers often reach for the same tools no matter what project they’re working on. As soon as they work on a new project, they’ll install the same packages and libraries that they’ve used before or that everyone else in the industry is using, no matter the requirements of the project they’re working on.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>A couple of weeks ago, I wrote about my reservations with trusting open source. But I think what’s even more funny is how developers often reach for the same tools no matter what project they’re working on. As soon as they work on a new project, they’ll install the same packages and libraries that they’ve used before or that everyone else in the industry is using, no matter the requirements of the project they’re working on.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Getting the Brown Out</title>
+        <id>https://josephchoe.com/getting-the-brown-out</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/getting-the-brown-out" />
+        <published>2021-04-16T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;At the beginning of the new year, I made a resolution to &lt;a href=&quot;/to-begin-anew&quot;&gt;work on my writing&lt;/a&gt;. And over the last fifteen weeks, I’ve been writing an essay every week. Not all of them have been very good, but some of them have been okay.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>At the beginning of the new year, I made a resolution to work on my writing. And over the last fifteen weeks, I’ve been writing an essay every week. Not all of them have been very good, but some of them have been okay.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>That&apos;s Impossible</title>
+        <id>https://josephchoe.com/impossible</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/impossible" />
+        <published>2021-04-09T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;There are few things I dislike more than hearing the words, “That’s impossible,” in the context of software development.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>There are few things I dislike more than hearing the words, “That’s impossible,” in the context of software development.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Trust No One</title>
+        <id>https://josephchoe.com/trust</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/trust" />
+        <published>2021-04-02T08:00:00-06:00</published>
+
+        
+          <updated>2021-04-14T04:16:52-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I’m always uneasy when using open source, especially in a professional context.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I’m always uneasy when using open source, especially in a professional context.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Event Sourcing, Part 3: Publish and Subscribe</title>
+        <id>https://josephchoe.com/event-sourcing-part-3</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/event-sourcing-part-3" />
+        <published>2021-03-26T08:00:00-06:00</published>
+
+        
+          <updated>2021-12-24T02:11:35-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Be sure to check out my 11+ hour video tutorial on &lt;a href=&quot;/event-sourcing-tutorial&quot;&gt;event sourcing&lt;/a&gt;!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>  Note: Be sure to check out my 11+ hour video tutorial on event sourcing!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>No Pokémon in This Arena</title>
+        <id>https://josephchoe.com/no-pokemon-in-this-arena</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/no-pokemon-in-this-arena" />
+        <published>2021-03-19T08:00:00-06:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;There is an idiom that people use to indicate they have no stake in the outcome of a particular argument.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>There is an idiom that people use to indicate they have no stake in the outcome of a particular argument.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Jordan Peterson Hasn&apos;t Read the Bible</title>
+        <id>https://josephchoe.com/jordan-peterson-hasnt-read-the-bible</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/jordan-peterson-hasnt-read-the-bible" />
+        <published>2021-03-12T07:00:00-07:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I admit that the title of this entry is more than a bit hyperbolic, but that is completely intentional. I think it’s rather funny and interesting when someone who purports to be religious makes simple mistakes about their own religion. Much like an historian or doctor might think it’s interesting when popular media makes mistakes about their own profession.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I admit that the title of this entry is more than a bit hyperbolic, but that is completely intentional. I think it’s rather funny and interesting when someone who purports to be religious makes simple mistakes about their own religion. Much like an historian or doctor might think it’s interesting when popular media makes mistakes about their own profession.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Really Simple Syndication</title>
+        <id>https://josephchoe.com/rss</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/rss" />
+        <published>2021-03-05T07:00:00-07:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I worked more than two years at a company that dealt in the Internet “content creator” space, and I use those double quotes as ironically as possible. Here’s a bit of what I learned, which admittedly wasn’t all that much to begin with.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I worked more than two years at a company that dealt in the Internet “content creator” space, and I use those double quotes as ironically as possible. Here’s a bit of what I learned, which admittedly wasn’t all that much to begin with.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Event Sourcing, Part 2: Email Uniqueness</title>
+        <id>https://josephchoe.com/event-sourcing-part-2</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/event-sourcing-part-2" />
+        <published>2021-02-26T07:00:00-07:00</published>
+
+        
+          <updated>2021-12-24T02:11:35-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Be sure to check out my 11+ hour video tutorial on &lt;a href=&quot;/event-sourcing-tutorial&quot;&gt;event sourcing&lt;/a&gt;!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>  Note: Be sure to check out my 11+ hour video tutorial on event sourcing!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Be a Snoop</title>
+        <id>https://josephchoe.com/snooping</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/snooping" />
+        <published>2021-02-19T07:00:00-07:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I think, as a whole, software developers are an incurious breed.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I think, as a whole, software developers are an incurious breed.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>My Ruby Development Environment</title>
+        <id>https://josephchoe.com/ruby-development-environment</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/ruby-development-environment" />
+        <published>2021-02-12T07:00:00-07:00</published>
+
+        
+          <updated>2022-10-18T11:45:54-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;When I come into a new Ruby project, whether that be through a new job or contract work or open source project, each one will generally follow the same principles, in that they’ll use the same package manager, they’ll have a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt; to note dependencies, and so forth.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>When I come into a new Ruby project, whether that be through a new job or contract work or open source project, each one will generally follow the same principles, in that they’ll use the same package manager, they’ll have a Gemfile to note dependencies, and so forth.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Technical Assessments Are Dumb</title>
+        <id>https://josephchoe.com/technical-assessments-are-dumb</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/technical-assessments-are-dumb" />
+        <published>2021-02-05T07:00:00-07:00</published>
+
+        
+          <updated>2021-02-05T16:26:01-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;Over the last year and throughout my career as a software developer, I’ve had the dubious pleasure of taking countless numbers of technical assessments, coding challenges, take-home assignments, et cetera, and I can unequivocally say that technical assessments are a complete waste of time.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>Over the last year and throughout my career as a software developer, I’ve had the dubious pleasure of taking countless numbers of technical assessments, coding challenges, take-home assignments, et cetera, and I can unequivocally say that technical assessments are a complete waste of time.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Event Sourcing, Part 1: User Registration</title>
+        <id>https://josephchoe.com/event-sourcing-part-1</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/event-sourcing-part-1" />
+        <published>2021-01-29T07:00:00-07:00</published>
+
+        
+          <updated>2021-12-24T02:11:35-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Be sure to check out my 11+ hour video tutorial on &lt;a href=&quot;/event-sourcing-tutorial&quot;&gt;event sourcing&lt;/a&gt;!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>  Note: Be sure to check out my 11+ hour video tutorial on event sourcing!</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>My Favorite Browser (Or Why It Doesn&apos;t Matter)</title>
+        <id>https://josephchoe.com/favorite-browser</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/favorite-browser" />
+        <published>2021-01-22T07:00:00-07:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;I vaguely remember the browser wars of the late 90s. I was a teenager back then, so I mostly followed the crowd with no fully-formed opinions of my own.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>I vaguely remember the browser wars of the late 90s. I was a teenager back then, so I mostly followed the crowd with no fully-formed opinions of my own.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>Why I Don&apos;t Have a Smartphone</title>
+        <id>https://josephchoe.com/no-smartphone</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/no-smartphone" />
+        <published>2021-01-15T07:00:00-07:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;People are always surprised when they see my phone.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>People are always surprised when they see my phone.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>A PayPal Ruby primer</title>
+        <id>https://josephchoe.com/paypal-ruby-primer</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/paypal-ruby-primer" />
+        <published>2021-01-08T07:00:00-07:00</published>
+
+        
+          <updated>2020-12-23T19:24:01-07:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;One of the most common use cases in software development is consuming third party APIs. The details may differ, but overall you’ll always need some way to interface with an external dependency, no matter your business. And if you’re in the e-commerce space, you’ll always need to collect money from your customers.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>One of the most common use cases in software development is consuming third party APIs. The details may differ, but overall you’ll always need some way to interface with an external dependency, no matter your business. And if you’re in the e-commerce space, you’ll always need to collect money from your customers.</summary>
+        
+      </entry>
+    
+  
+    
+      
+
+      <entry>
+        <title>To Begin Anew</title>
+        <id>https://josephchoe.com/to-begin-anew</id>
+        <link rel="alternate" type="text/html" href="https://josephchoe.com/to-begin-anew" />
+        <published>2020-12-31T07:00:00-07:00</published>
+
+        
+          <updated>2022-10-18T11:35:45-06:00</updated>
+        
+
+        <author>
+          <name>Joseph Choe</name>
+          <uri>https://josephchoe.com</uri>
+          <email>joseph@josephchoe.com</email>
+        </author>
+
+        <content type="html" xml:base="https://josephchoe.com/">
+          
+            &lt;p&gt;A couple of weeks ago, I quit my job.&lt;/p&gt;
+
+          
+          
+        </content>
+
+        
+          <summary>A couple of weeks ago, I quit my job.</summary>
+        
+      </entry>
+    
+  
+</feed>

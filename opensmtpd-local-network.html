@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>OpenSMTPD on the Local Network | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/opensmtpd-local-network" />
+  <meta property="og:title" content="OpenSMTPD on the Local Network | Joseph Choe" />
+  <meta property="og:description" content="One of the many great things about OpenBSD is that it comes with OpenSMTPD by default, allowing my servers to communicate with themselves and each other via the SMTP protocol. This is used to send ..." />
+  <meta property="og:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="OpenSMTPD on the Local Network | Joseph Choe" />
+  <meta name="twitter:description" content="One of the many great things about OpenBSD is that it comes with OpenSMTPD by default, allowing my servers to communicate with themselves and each other via the SMTP protocol. This is used to send ..." />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="title">
+    <h1>OpenSMTPD on the Local Network</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Dec 24 2021</small>
+  </div>
+  <p>One of the many great things about OpenBSD is that it comes with OpenSMTPD by default, allowing my servers to communicate with themselves and each other via the SMTP protocol. This is used to send insecurity reports, failed cron jobs, et cetera to various users on the system.</p>
+
+<p>However, I don’t want to have to check each machine’s mail spool to see if there are any messages I need to act upon. I’d much rather have a central mail server to collect all these messages so that I have a single place to check.</p>
+
+<p>This is easily done as <a href="https://man.openbsd.org/smtpd.conf"><code class="language-plaintext highlighter-rouge">smtpd.conf(5)</code></a> has an easy to understand manual page.</p>
+
+<h2 id="mail-server-configuration">Mail Server Configuration</h2>
+
+<p>First, let’s provision a <a href="/openbsd-proxmox">new virtual machine</a> with OpenBSD 7.0 installed, <a href="/openntpd">setup NTP</a>, and so on and so forth.</p>
+
+<p>I’m going to need to generate a self-signed certificate in order to enable TLS, so let’s create a private key:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>doas openssl genrsa <span class="nt">-out</span> /etc/ssl/private/mx0.jfc.dev.key 4096
+</code></pre></div></div>
+
+<p>Make sure that the permissions for the key are <code class="language-plaintext highlighter-rouge">600</code>, otherwise starting <code class="language-plaintext highlighter-rouge">smtpd</code> will probably fail.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>doas <span class="nb">chmod </span>600 /etc/ssl/private/mx0.jfc.dev.key
+</code></pre></div></div>
+
+<p>Once I have that, I can generate the certificate. It will take a few variables, which I’ve exported:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">OPENSSL_COUNTRY</span><span class="o">=</span>...
+<span class="nb">export </span><span class="nv">OPENSSL_STATE</span><span class="o">=</span>...
+<span class="nb">export </span><span class="nv">OPENSSL_LOCALITY</span><span class="o">=</span>...
+<span class="nb">export </span><span class="nv">OPENSSL_ORGANIZATION</span><span class="o">=</span>...
+<span class="nb">export </span><span class="nv">OPENSSL_COMMON_NAME</span><span class="o">=</span>...
+
+<span class="nv">$ </span>doas openssl req <span class="nt">-x509</span> <span class="nt">-new</span> <span class="nt">-key</span> /etc/ssl/private/mx0.jfc.dev.key <span class="se">\</span>
+    <span class="nt">-out</span> /etc/ssl/mx0.jfc.dev.crt <span class="se">\</span>
+    <span class="nt">-days</span> 18250 <span class="se">\</span>
+    <span class="nt">-subj</span> <span class="s2">"/C=</span><span class="nv">$OPENSSL_COUNTRY</span><span class="s2">/ST=</span><span class="nv">$OPENSSL_STATE</span><span class="s2">/L=</span><span class="nv">$OPENSSL_LOCALITY</span><span class="s2">/O=</span><span class="nv">$OPENSSL_ORGANIZATION</span><span class="s2">/OU=/CN=</span><span class="nv">$OPENSSL_COMMON_NAME</span><span class="s2">"</span>
+</code></pre></div></div>
+
+<p>I’ve set it to an absurdly high amount of years, because I don’t want to bother with it again.</p>
+
+<p>Once that’s done, I can configure the mail server’s <code class="language-plaintext highlighter-rouge">/etc/mail/smtpd.conf</code> file:</p>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">table</span> <span class="n">addresses</span> { $<span class="n">SERVER_IP_1</span>, $<span class="n">SERVER_IP_2</span>, $<span class="n">SERVER_IP_3</span> }
+<span class="n">table</span> <span class="n">domains</span> { <span class="n">devbox</span>-<span class="n">ntp</span>.<span class="n">home</span>.<span class="n">lan</span>, <span class="n">devbox</span>-<span class="n">svc0</span>.<span class="n">home</span>.<span class="n">lan</span>, <span class="n">devbox</span>-<span class="n">wg0</span>.<span class="n">home</span>.<span class="n">lan</span> }
+
+<span class="n">table</span> <span class="n">aliases</span> <span class="n">file</span>:/<span class="n">etc</span>/<span class="n">mail</span>/<span class="n">aliases</span>
+
+<span class="n">pki</span> <span class="n">mx0</span>.<span class="n">jfc</span>.<span class="n">dev</span> <span class="n">cert</span> <span class="s2">"/etc/ssl/mx0.jfc.dev.crt"</span>
+<span class="n">pki</span> <span class="n">mx0</span>.<span class="n">jfc</span>.<span class="n">dev</span> <span class="n">key</span> <span class="s2">"/etc/ssl/private/mx0.jfc.dev.key"</span>
+
+<span class="n">listen</span> <span class="n">on</span> <span class="n">lo0</span>
+<span class="n">listen</span> <span class="n">on</span> <span class="n">vio0</span> <span class="n">tls</span>-<span class="n">require</span> <span class="n">pki</span> <span class="n">mx0</span>.<span class="n">jfc</span>.<span class="n">dev</span>
+
+<span class="n">action</span> <span class="n">local_delivery</span> <span class="n">maildir</span> <span class="s2">"/home/%{user.username}/Maildir"</span> <span class="n">alias</span> &lt;<span class="n">aliases</span>&gt;
+
+<span class="n">match</span> <span class="n">from</span> <span class="n">local</span> <span class="n">for</span> <span class="n">local</span> <span class="n">action</span> <span class="n">local_delivery</span>
+<span class="n">match</span> <span class="n">from</span> <span class="n">src</span> &lt;<span class="n">addresses</span>&gt; <span class="n">for</span> <span class="n">domain</span> &lt;<span class="n">domains</span>&gt; <span class="n">action</span> <span class="n">local_delivery</span>
+</code></pre></div></div>
+
+<p>The first couple of lines sets up the tables I’ll need later on in the configuration. I’ve also let <a href="https://man.openbsd.org/smtpd.8"><code class="language-plaintext highlighter-rouge">smtpd(8)</code></a> know where to find the key and certificate.</p>
+
+<p>The server will listen on both the loopback device and the virtual network device, though it will require TLS. I don’t want to set the <code class="language-plaintext highlighter-rouge">verify</code> option because I don’t want to require a valid certificate from a certificate authority or manage my own.</p>
+
+<p>The last few lines deliver all of the incoming mail to each user using the Maildir format. I also use expansion mapping, so mail directed to the <code class="language-plaintext highlighter-rouge">root</code> user is directed to me, i.e. <code class="language-plaintext highlighter-rouge">joseph</code>. Check out the <code class="language-plaintext highlighter-rouge">/etc/mail/aliases</code> file:</p>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">root</span>: <span class="n">joseph</span>
+</code></pre></div></div>
+
+<p>And run <code class="language-plaintext highlighter-rouge">doas newaliases</code>. After that’s done, I need to restart <code class="language-plaintext highlighter-rouge">smtpd</code>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>doas rcctl restart smtpd
+</code></pre></div></div>
+
+<p>Next, I need to set up the machine’s firewall by editing the <code class="language-plaintext highlighter-rouge">/etc/pf.conf</code> file:</p>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">if</span> = <span class="s2">"vio0"</span>
+
+<span class="n">set</span> <span class="n">skip</span> <span class="n">on</span> <span class="n">lo0</span>
+<span class="n">block</span> <span class="n">return</span>
+
+<span class="n">pass</span> <span class="n">in</span> <span class="n">on</span> $<span class="n">if</span> <span class="n">inet</span> <span class="n">proto</span> <span class="n">icmp</span>
+<span class="n">pass</span> <span class="n">in</span> <span class="n">on</span> $<span class="n">if</span> <span class="n">inet</span> <span class="n">proto</span> <span class="n">tcp</span> <span class="n">to</span> <span class="n">port</span> {<span class="n">ssh</span>}
+<span class="n">pass</span> <span class="n">in</span> <span class="n">on</span> $<span class="n">if</span> <span class="n">inet</span> <span class="n">proto</span> <span class="n">tcp</span> <span class="n">to</span> <span class="n">port</span> {<span class="n">smtp</span>}
+<span class="n">pass</span> <span class="n">out</span> <span class="n">on</span> $<span class="n">if</span>
+</code></pre></div></div>
+
+<p>The only thing to note here is that I’m passing in the <code class="language-plaintext highlighter-rouge">smtp</code> port. Restart the firewall:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>doas pfctl <span class="nt">-f</span> /etc/pf.conf
+</code></pre></div></div>
+
+<h2 id="other-server-configuration">Other Server Configuration</h2>
+
+<p>Next I need to set up each and every other virtual machine I have to send their mail to the mail server.</p>
+
+<p>On each of those servers, I update the <code class="language-plaintext highlighter-rouge">/etc/mail/smtpd.conf</code> file as follows:</p>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">listen</span> <span class="n">on</span> <span class="n">lo0</span>
+
+<span class="n">action</span> <span class="n">relay_to_mx0</span> <span class="n">relay</span> <span class="n">host</span> <span class="n">smtp</span>+<span class="n">tls</span>://$<span class="n">MAIL_SERVER_IP</span> <span class="n">tls</span> <span class="n">no</span>-<span class="n">verify</span>
+
+<span class="n">match</span> <span class="n">from</span> <span class="n">local</span> <span class="n">action</span> <span class="n">relay_to_mx0</span>
+</code></pre></div></div>
+
+<p>Again I set the <code class="language-plaintext highlighter-rouge">no-verify</code> option because I don’t want to generate a certificate for each server.</p>
+
+<p>Now let’s edit the <code class="language-plaintext highlighter-rouge">/etc/pf.conf</code> file:</p>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">if</span> = <span class="s2">"vio0"</span>
+
+<span class="n">set</span> <span class="n">skip</span> <span class="n">on</span> <span class="n">lo</span>
+<span class="n">block</span> <span class="n">return</span>
+
+<span class="n">pass</span> <span class="n">in</span> <span class="n">on</span> $<span class="n">if</span> <span class="n">inet</span> <span class="n">proto</span> <span class="n">icmp</span>
+<span class="n">pass</span> <span class="n">in</span> <span class="n">on</span> $<span class="n">if</span> <span class="n">inet</span> <span class="n">proto</span> {<span class="n">tcp</span>} <span class="n">to</span> <span class="n">port</span> {<span class="n">ssh</span>}
+<span class="n">pass</span> <span class="n">out</span> <span class="n">on</span> $<span class="n">if</span>
+</code></pre></div></div>
+
+<p>I think that’s fairly straightforward as it’s identical to the one on the mail server, except the line for the <code class="language-plaintext highlighter-rouge">smtp</code> port.</p>
+
+<p>Finally, let’s run:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>doas rcctl restart smtpd
+<span class="nv">$ </span>doas pfctl <span class="nt">-f</span> /etc/pf.conf
+</code></pre></div></div>
+
+<h2 id="testing">Testing</h2>
+
+<p>We need to make sure this setup actually works. We can do that by using <a href="https://man.openbsd.org/sendmail"><code class="language-plaintext highlighter-rouge">sendmail(8)</code></a>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>sendmail joseph
+Subject: Test Subject
+
+Hello, EHLO!
+</code></pre></div></div>
+
+<p>If we check the mail server’s Maildir:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Return-Path: &lt;joseph@devbox-ntp.home.lan&gt;
+Delivered-To: joseph@devbox-ntp.home.lan
+Received: from devbox-ntp.home.lan (devbox-ntp.home.lan [$NTP_SERVER_IP])
+        by devbox-mx0.home.lan (OpenSMTPD) with ESMTPS id 64f3eab9 (TLSv1.3:AEAD-AES256-GCM-SHA384:256:NO)
+        for &lt;joseph@devbox-ntp.home.lan&gt;;
+        Thu, 23 Dec 2021 14:23:47 -0700 (MST)
+Received: from localhost (devbox-ntp.home.lan [local])
+        by devbox-ntp.home.lan (OpenSMTPD) with ESMTPA id f55200d4
+        for &lt;joseph@devbox-ntp.home.lan&gt;;
+        Thu, 23 Dec 2021 14:23:46 -0700 (MST)
+From:  &lt;joseph@devbox-ntp.home.lan&gt;
+Date: Thu, 23 Dec 2021 14:23:32 -0700 (MST)
+Subject: Test Subject
+Message-ID: &lt;6579236dae00ceb2@devbox-ntp.home.lan&gt;
+
+Hello, EHLO!
+</code></pre></div></div>
+
+<p>The mail actually came in!</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Using this setup, I can manage all of my network’s communication from the central mail server. I can view insecurity reports and make sure that certain files have correct permissions or if there’s been any software installed that I don’t know about. I can make sure that the cronjobs are running correctly through any error mails that may come in.</p>
+
+<p>Once the message is on my mail server, I can retrieve it through the IMAP protocol, though setting up an IMAP server will have to wait until a future essay.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/dynamic-dns">&laquo; Dynamic DNS</a>
+
+
+|
+
+
+  <a class="next" href="/year-of-writing">A Year of Writing &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>

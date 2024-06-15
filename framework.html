@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>The New Framework | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/framework" />
+  <meta property="og:title" content="The New Framework | Joseph Choe" />
+  <meta property="og:description" content="I purchased a new Framework laptop." />
+  <meta property="og:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="The New Framework | Joseph Choe" />
+  <meta name="twitter:description" content="I purchased a new Framework laptop." />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="title">
+    <h1>The New Framework</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Oct 22 2021</small>
+  </div>
+  <p>I purchased a new <a href="https://frame.work">Framework laptop</a>.</p>
+
+<p>I’ve actually had my eye on these laptops for more than a few months. Especially coming from a decade of MacBook Pros, I love the idea of a laptop almost as repairable as my own <a href="/infrastructure">personal computer</a>.</p>
+
+<p>If you know MacBook Pros, they’ve become almost impossible to repair. Even a simple battery replacement nowadays means I have to go to the Apple Store and ship the machine off for several weeks. Only a decade ago, I could purchase a battery online and replace it myself.</p>
+
+<p>Yet the Framework promised something much more. I could replace the battery, the mainboard, the memory, even the monitor and keyboard. It was a truly repairable laptop.</p>
+
+<p>I decided to take the plunge and preorder one, and it finally came this week.</p>
+
+<h2 id="build-quality">Build Quality</h2>
+
+<p>Despite being one of the most repairable laptops I’ve ever owned, I was expecting something quite flimsy. However, it is actually pretty rigid in body, both its keyboard and monitor. And despite being light and thin, it had a good heft and weight to it.</p>
+
+<p>The aluminum chassis felt nice and cool to the touch, though I think the USB expansion cards are a bit hit or miss. The USB-C expansion cards do sit flush against the body of the laptop, but the USB-A expansion cards I do go into the body a bit, leaving behind a noticeable lip that catches on the fingers.</p>
+
+<p>However, other than that, I have very few complaints about the quality of materials.</p>
+
+<h2 id="hardware-installation">Hardware Installation</h2>
+
+<p>Installing everything was pretty easy, with one exception.</p>
+
+<p>I put in an extra Samsung 980 PRO 1TB NVMe SSD I had lying around and installed the 64 GB of DDR4 memory. I don’t really have any tasks that would require so much RAM, but I suppose I always go for future upgradeability in mind. I don’t really want to have to buy new RAM in the future, and it felt like I would rather have it and not need it and such like.</p>
+
+<p>The only thing that was very fiddly to install was the WiFi card. I must have spent ten minutes getting the antennae to catch and then slowly try to insert the card, only to have them slip off anyway. After much frustration, I managed to get it on.</p>
+
+<h2 id="disk-setup">Disk Setup</h2>
+
+<p>I’ve been playing around with different operating systems on the <code class="language-plaintext highlighter-rouge">devbox</code> and also on the virtualization machine, including OpenBSD and Gentoo Linux. I’ve even managed to build a kernel to my exact specifications, which is something of a first for me.</p>
+
+<p>However, I decided to go with OpenBSD for the machine. Additionally, I decided to encrypt my disk with a simple USB keydisk.</p>
+
+<p>Disk setup is actually pretty simple, and I would recommend just following the <a href="https://www.openbsd.org/faq/faq14.html">OpenBSD FAQ</a>. Otherwise, here’s what I did.</p>
+
+<p>First I prepared the disk and initialized it:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /dev <span class="o">&amp;&amp;</span> sh MAKEDEV sd0
+<span class="nb">dd </span><span class="k">if</span><span class="o">=</span>/dev/urandom <span class="nv">of</span><span class="o">=</span>/dev/sd0c <span class="nv">bs</span><span class="o">=</span>1m
+fdisk <span class="nt">-iy</span> <span class="nt">-g</span> <span class="nt">-b</span> 960 sd0
+</code></pre></div></div>
+<p>The second line writes random data and takes a <em>long</em> time, while the third line writes a GPT to the disk.</p>
+
+<p>Then, I created a partition layout:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># disklabel -E sd0</span>
+Label editor <span class="o">(</span>enter <span class="s1">'?'</span> <span class="k">for </span><span class="nb">help </span>at any prompt<span class="o">)</span>
+sd0&gt; a a
+offset: 1024
+size: <span class="k">*</span>
+FS <span class="nb">type</span>: RAID
+sd0<span class="k">*</span><span class="o">&gt;</span> w
+sd0&gt; q
+No label changes.
+</code></pre></div></div>
+
+<p>And I did the same thing with my USB keydisk, though this time writing an MBR to the disk instead of GPT.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /dev <span class="o">&amp;&amp;</span> sh MAKEDEV sd2
+fdisk <span class="nt">-iy</span> sd2
+</code></pre></div></div>
+
+<p>If you’re wondering, my 1TB SSD is <code class="language-plaintext highlighter-rouge">sd0</code>, while the OpenBSD installation disk is on a USB that’s <code class="language-plaintext highlighter-rouge">sd1</code>. The keydisk is at <code class="language-plaintext highlighter-rouge">sd2</code>.</p>
+
+<p>Then I partitioned the keydisk, though I only needed 1 MB:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># disklabel -E sd2</span>
+Label editor <span class="o">(</span>enter <span class="s1">'?'</span> <span class="k">for </span><span class="nb">help </span>at any prompt<span class="o">)</span>
+sd2&gt; a a
+offset: 64
+size: 1M
+FS <span class="nb">type</span>: RAID
+sd2<span class="k">*</span><span class="o">&gt;</span> w
+sd2&gt; q
+No label changes.
+</code></pre></div></div>
+
+<p>Once that was done, I created an encrypted volume:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bioctl <span class="nt">-c</span> C <span class="nt">-k</span> sd2a <span class="nt">-l</span> sd0a softraid0
+sh MAKEDEV sd3
+<span class="nb">dd </span><span class="k">if</span><span class="o">=</span>/dev/zero <span class="nv">of</span><span class="o">=</span>/dev/sd3c <span class="nv">bs</span><span class="o">=</span>1m <span class="nv">count</span><span class="o">=</span>1
+</code></pre></div></div>
+
+<p>The last line overwrites the first megabyte of the new pseudo-device <code class="language-plaintext highlighter-rouge">sd3</code> with zeros.</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>Then, I just went through the installation of OpenBSD, careful to choose <code class="language-plaintext highlighter-rouge">sd3</code> as my root disk. Honestly, there’s no reason to walkthrough it, because it’s such an easy installation process.</p>
+
+<p>However, instead of using the <a href="https://man.openbsd.org/disklabel#AUTOMATIC_DISK_ALLOCATION">default partition layout</a>, I changed the swap to 8 GB. I didn’t think I needed a 100+ GB of swap, which is what happens in a default installation with a 1 TB disk. Given the size of my RAM, I think I can live with only 8 GB of swap.</p>
+
+<p>Even with the 100+ GB swap, the OpenBSD default partition only utilizes about 50% of the entire disk. I still have like 400+ GB left, which I decided to keep as is.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>And that’s my first few days with my new Framework. I don’t yet have a graphical user interface, but I’m planning on installing and configuring one next week. Whether I write about any of it remains to be seen.</p>
+
+<p>Other than a few headaches with the WiFi card, the Framework was easy to get up and running. It’s quite a nice machine that I expect to be using for many years to come.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/foundering">&laquo; Foundering Down to the Ground</a>
+
+
+|
+
+
+  <a class="next" href="/openbsd-proxmox">Installing OpenBSD on a Proxmox VM &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>

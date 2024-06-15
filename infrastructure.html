@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Personal Infrastructure | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/infrastructure" />
+  <meta property="og:title" content="Personal Infrastructure | Joseph Choe" />
+  <meta property="og:description" content="Homelabs are one of those things that quickly spiral out of control." />
+  <meta property="og:image" content="https://josephchoe.com/assets/posts/essay/2021-09-03-infrastructure/share.png" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="Personal Infrastructure | Joseph Choe" />
+  <meta name="twitter:description" content="Homelabs are one of those things that quickly spiral out of control." />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/posts/essay/2021-09-03-infrastructure/share.png" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="parent">
+    <a href="/essay" rel="tag">Essays</a>
+  </div>
+  <div class="title">
+    <h1>Personal Infrastructure</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Sep 3 2021</small>
+  </div>
+  <p>Homelabs are one of those things that quickly spiral out of control.</p>
+
+<p>For the longest time, my “homelab” has been my laptop, a MacBook Pro that I might update every three cycles or so. I did everything on this computer, including watching movies, browsing the Internet, and of course software development.</p>
+
+<p>Prior to that, about a decade ago, I used to build all of my computers. However, the constant need for maintenance and upgrade quickly diminished my tolerance for the finicky nature of building computers.</p>
+
+<p>Still, it quickly became clear over the last couple of years that my current laptop was on its last legs. Couple that with the knowledge that machines from most major vendors constantly monitors your telemetry, and I needed to look for a better way.</p>
+
+<p>I started thinking about building computers again, not just for myself but also for my wife.</p>
+
+<p>Now, almost a year later, things have certainly expanded.</p>
+
+<figure class="image">
+  
+  <img src="assets/posts/essay/2021-09-03-infrastructure/rack.png" alt="Personal homelab, circa September 2021. &lt;br&gt;Pay no attention to the cable management." />
+  <figcaption>Personal homelab, circa September 2021. <br />Pay no attention to the cable management.</figcaption>
+  
+</figure>
+
+<h2 id="the-rack">The Rack</h2>
+
+<p>When I set about this project of building out my homelab in December 2020, I decided I would build out a server rack for all of my family’s computing needs.</p>
+
+<p>Why exactly?</p>
+
+<p>Part of my decision making was that I didn’t want to clutter our desks with bulky workstations. Personal computer cases take up way too much space for my liking, and I didn’t want to put these huge heavy computer cases on our rather flimsy desks. Nor did I want to put them on the floor where they could overheat from the carpet.</p>
+
+<p>I also didn’t want the noise pollution of several different fans going off at once in our home office. I could mitigate that somewhat by using better CPU and exhaust fans, but the GPU or chipset fans were mostly out of my control. I also didn’t want to look into AIO coolers or custom water loops, because at the end of the day, fans are still being used in the radiator, so it’s still just as noisy.</p>
+
+<p>But, if I could keep the rack out of the way and move a couple of cables to our office, I could have absolute silent computing!</p>
+
+<p>Plus, I thought it would be an educational experience to build out a server rack. You suddenly learn a lot about a lot of different things!</p>
+
+<h2 id="networking">Networking</h2>
+
+<p>Building out my homelab has inevitably led me to learn more and more about networking. Before this project, I had no idea about VLANs or subnets or whatever. About the most I did on a firewall was to forward a port or two.</p>
+
+<p>Prior to this project, I had already used a couple of Raspberry Pi’s to serve as a DNS-based sinkhole for ads, as well as a controller for the network. When I did that, I had purchased a small 8-port switch and an access point from UniFi. The access point served our laptops just fine, while the Raspberry Pi’s used ethernet via the switch.</p>
+
+<p>That worked well, but for this project, I would need a lot more ports, so I had to purchase an even larger switch. I purchased a 24 port switch, which was more than what I actually needed, but I suppose it’s better to have it and not need it, than to need it and not have it.</p>
+
+<p>One of my future goals is to build my own router, but I didn’t want to take several weeks to do that, so I reused our old UniFi router. However, I really had to dig in and understand how to set up different private subnets, VLANs, and so forth. It took a while for me to wrap my head around it, and I did after a particularly frustrating weekend, but for a while there I was tearing my hair out.</p>
+
+<h2 id="my-wifes-personal-computer">My Wife’s Personal Computer</h2>
+
+<p>This was the first of many computers I built this year.</p>
+
+<p>Though it’s funny how it’s customary to say I “built” this computer, when really I purchased components from an online vendor and assembled those components together. It’s something more akin to Legos in that respect.</p>
+
+<p>My wife’s requirements were that it be able to play games, so her computer is actually a bit better than mine in terms of hardware. However, due to the parts shortages of 2020 and 2021, I had to make do with the last generation of CPU and GPU.</p>
+
+<p>Due to personal reasons, I’m a big supporter of AMD, and I try to avoid using Nvidia’s products whenever I can. So her machine has a Ryzen CPU and a Radeon GPU.</p>
+
+<p>Because this PC lives on a rack that’s a fair distance from our desk, we had to look for solutions that allowed us to feed our I/O through one or two cables. At first, we tried a single Thunderbolt cable, but Thunderbolt on most AMD motherboards seems to be lacking much support. It was finicky and unstable, no matter what we did. So I settled on a USB extender paired with a very long DisplayPort cable.</p>
+
+<p>Honestly, this was the most difficult to build, because my computer-building skills had atrophied from almost a decade of purchasing MacBook Pros. I learned many valuable lessons in this first iteration that were very helpful as the year rolled onwards.</p>
+
+<h2 id="network-attached-storage">Network Attached Storage</h2>
+
+<p>Next, I decided to tackle building a network attached storage server, or NAS.</p>
+
+<p>I’m a big fan of the chassis made by Supermicro, and I found one on Ebay with the right form factor I was looking for. It didn’t come with any motherboard or anything like that though, so I had to look for those myself. I went with a server-grade CPU and motherboard, as well as ECC RAM. I suppose I was pretty paranoid about losing data.</p>
+
+<p>I run Unraid on this machine, mostly because I didn’t want to buy 24 hard drives and learn to set up ZFS. My budget limited me to two 12 TB hard drives, one which I use as a parity drive, while giving myself the option in the future to buy more drives and expand the machine’s capacity.</p>
+
+<p>I must say, it’s been pretty nice to have so much storage available. I managed to free up a <em>lot</em> of space on my laptop.</p>
+
+<h2 id="kvm">KVM</h2>
+
+<p>At around this time, I bought a KVM switch and hooked up an extra keyboard and mouse along with a tiny monitor. This allowed me to directly control each machine and switch between them pretty easily.</p>
+
+<h2 id="virtualization-server">Virtualization Server</h2>
+
+<p>Next I decided to build a virtualization server. Parts shortages were still affecting my ability to purchase consumer-grade hardware, but server-grade hardware was actually pretty easy to find at reasonable prices. A Supermicro chassis makes another appearance here, this time in 1U form factor.</p>
+
+<p>I use this for many different odd workloads, including video encoding and even private game servers for my wife. Sometimes I’ll use it to spin up a test virtual machine so I can play around with a new operating system. It’s especially useful for work, as I can spin up new VMs to build and test server configurations.</p>
+
+<h2 id="my-personal-computer">My Personal Computer</h2>
+
+<p>Finally, I could build my personal computer, which I’ve come to call <code class="language-plaintext highlighter-rouge">devbox</code>. It was supposed to replace my laptop, but it’s grown to be much more. Building the other computers allowed me to make more informed decisions, and I decided to <em>also</em> use the same virtualization engine on the <code class="language-plaintext highlighter-rouge">devbox</code> in order to virtualize whatever operating system I needed.</p>
+
+<p>So I’ve got a virtual machine for personal software development, one for work, another to edit videos in Windows 10, and yet another to play video games, though this one doesn’t get used very much, alas. These VMs passthrough the relevant USB and PCIe, also using a USB extender and DisplayPort cable, to the monitor and keyboard at my desk.</p>
+
+<p>Doing things this way also allows me to try out operating systems like Fedora or OpenBSD, breaking things without worrying about doing things the “right” way. Coupled with the NAS and the virtualization server, I have a lot of computing power available to use at my fingertips.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>I’m not sure what’s next. I think my homelab is pretty much complete, though I suppose there’s the router build I’ve put on hold.</p>
+
+<p>My main takeaway is that while companies like Apple spend a great deal of resources to make things “just work”, if you take the time and effort to learn <strong>how and why things work</strong>, you gain much more in the long term. I’ve used the knowledge and skills I’ve attained in this personal project in many other projects besides, both personal and work-related.</p>
+
+<p>I don’t know if I could ever go back.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/building-a-cron-scheduler">&laquo; Building a Cron Scheduler</a>
+
+
+|
+
+
+  <a class="next" href="/farming-metaphor">Farming Metaphor &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>

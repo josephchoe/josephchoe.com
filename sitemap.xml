@@ -1,0 +1,895 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://josephchoe.com/</loc>
+    <lastmod>2024-06-15</lastmod>
+  </url>
+
+  
+    
+      
+    
+  
+    
+      
+        <url>
+          <loc>https://josephchoe.com/archive</loc>
+          
+            <lastmod>2020-12-08</lastmod>
+          
+        </url>
+      
+    
+  
+    
+      
+        <url>
+          <loc>https://josephchoe.com/essay</loc>
+          
+            <lastmod>2020-12-23</lastmod>
+          
+        </url>
+      
+    
+  
+    
+      
+        <url>
+          <loc>https://josephchoe.com/impossible-children</loc>
+          
+            <lastmod>2022-10-18</lastmod>
+          
+        </url>
+      
+    
+  
+    
+      
+    
+  
+    
+      
+        <url>
+          <loc>https://josephchoe.com/no-comments</loc>
+          
+            <lastmod>2023-08-28</lastmod>
+          
+        </url>
+      
+    
+  
+    
+      
+        <url>
+          <loc>https://josephchoe.com/public-key</loc>
+          
+            <lastmod>2024-01-27</lastmod>
+          
+        </url>
+      
+    
+  
+    
+      
+        <url>
+          <loc>https://josephchoe.com/twitch</loc>
+          
+            <lastmod>2023-08-28</lastmod>
+          
+        </url>
+      
+    
+  
+    
+      
+        <url>
+          <loc>https://josephchoe.com/video</loc>
+          
+            <lastmod>2021-07-01</lastmod>
+          
+        </url>
+      
+    
+  
+    
+      
+        <url>
+          <loc>https://josephchoe.com/youtube</loc>
+          
+            <lastmod>2022-10-30</lastmod>
+          
+        </url>
+      
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+
+  
+    
+      <url>
+        <loc>https://josephchoe.com/hyperstack</loc>
+        
+          <lastmod>2024-05-03</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/cmixer</loc>
+        
+          <lastmod>2023-05-25</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/technology</loc>
+        
+          <lastmod>2023-05-12</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/plaintext-web</loc>
+        
+          <lastmod>2023-05-03</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/dictionary</loc>
+        
+          <lastmod>2023-04-17</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/never-smartphone</loc>
+        
+          <lastmod>2023-04-17</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/smtpd-filters-ruby</loc>
+        
+          <lastmod>2023-04-12</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/ksh-job-control</loc>
+        
+          <lastmod>2023-04-12</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/runit-with-control</loc>
+        
+          <lastmod>2023-03-22</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/runit-with-snooze</loc>
+        
+          <lastmod>2023-03-22</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/runit-with-logging</loc>
+        
+          <lastmod>2023-03-15</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/running-with-runit</loc>
+        
+          <lastmod>2023-03-08</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/automated-build-systems-with-fwa</loc>
+        
+          <lastmod>2023-03-08</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/writing-my-book-with-latex</loc>
+        
+          <lastmod>2023-02-14</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/scheduling-with-at</loc>
+        
+          <lastmod>2023-01-31</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/speedmaster</loc>
+        
+          <lastmod>2023-01-24</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/notifications-with-herbe</loc>
+        
+          <lastmod>2023-02-14</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/update-compiling-ruby-from-source</loc>
+        
+          <lastmod>2023-01-08</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/year-of-new</loc>
+        
+          <lastmod>2022-12-31</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/urlview</loc>
+        
+          <lastmod>2022-11-29</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/slow-watch</loc>
+        
+          <lastmod>2022-11-14</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/proxmox-openbsd</loc>
+        
+          <lastmod>2022-11-26</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/rss-terminal</loc>
+        
+          <lastmod>2023-04-05</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/thirteen-witches-memory-thief</loc>
+        
+          <lastmod>2022-07-19</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/mail</loc>
+        
+          <lastmod>2022-07-05</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/year-of-writing</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/opensmtpd-local-network</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/dynamic-dns</loc>
+        
+          <lastmod>2021-12-22</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/loyalty</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/wireguard</loc>
+        
+          <lastmod>2021-12-03</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/compiling-ruby-from-source</loc>
+        
+          <lastmod>2021-11-23</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/outage</loc>
+        
+          <lastmod>2022-11-14</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/exploring-ruby-cgi</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/openntpd</loc>
+        
+          <lastmod>2021-12-15</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/openbsd-proxmox</loc>
+        
+          <lastmod>2021-11-11</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/framework</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/foundering</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/punitive-measures</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/better-technical-interview</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/developer-error</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/lessons-learned</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/farming-metaphor</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/infrastructure</loc>
+        
+          <lastmod>2021-09-21</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/building-a-cron-scheduler</loc>
+        
+          <lastmod>2021-08-17</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/deploying-eventide-to-heroku</loc>
+        
+          <lastmod>2021-08-12</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/welcome-email-part-2</loc>
+        
+          <lastmod>2021-08-04</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/welcome-email-part-1</loc>
+        
+          <lastmod>2021-08-04</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/rack-data-validation</loc>
+        
+          <lastmod>2021-07-29</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/ruby-development</loc>
+        
+          <lastmod>2021-07-19</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/rack-the-best-ruby-web-framework</loc>
+        
+          <lastmod>2021-07-16</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/event-sourcing-snapshots</loc>
+        
+          <lastmod>2021-07-07</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/event-sourcing-tutorial</loc>
+        
+          <lastmod>2021-07-07</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/wip-june-2021</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/tech-stack</loc>
+        
+          <lastmod>2022-11-28</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/full-capacity</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/overtime</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/sucker-punch</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/allergies</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/dont-repeat-yourself</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/code-monkey</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/event-sourcing-part-4</loc>
+        
+          <lastmod>2021-12-24</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/plug-and-chug</loc>
+        
+          <lastmod>2021-06-01</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/getting-the-brown-out</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/impossible</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/trust</loc>
+        
+          <lastmod>2021-04-14</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/event-sourcing-part-3</loc>
+        
+          <lastmod>2021-12-24</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/no-pokemon-in-this-arena</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/jordan-peterson-hasnt-read-the-bible</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/rss</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/event-sourcing-part-2</loc>
+        
+          <lastmod>2021-12-24</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/snooping</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/ruby-development-environment</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/technical-assessments-are-dumb</loc>
+        
+          <lastmod>2021-02-05</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/event-sourcing-part-1</loc>
+        
+          <lastmod>2021-12-24</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/favorite-browser</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/no-smartphone</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/paypal-ruby-primer</loc>
+        
+          <lastmod>2020-12-23</lastmod>
+        
+      </url>
+    
+  
+    
+      <url>
+        <loc>https://josephchoe.com/to-begin-anew</loc>
+        
+          <lastmod>2022-10-18</lastmod>
+        
+      </url>
+    
+  
+
+</urlset>

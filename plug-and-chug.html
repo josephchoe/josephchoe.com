@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>The Plug and Chug Developer Mentality | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/plug-and-chug" />
+  <meta property="og:title" content="The Plug and Chug Developer Mentality | Joseph Choe" />
+  <meta property="og:description" content="A couple of weeks ago, I wrote about my reservations with trusting open source. But I think what’s even more funny is how developers often reach for the same tools no matter what project they’re wo..." />
+  <meta property="og:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="The Plug and Chug Developer Mentality | Joseph Choe" />
+  <meta name="twitter:description" content="A couple of weeks ago, I wrote about my reservations with trusting open source. But I think what’s even more funny is how developers often reach for the same tools no matter what project they’re wo..." />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="parent">
+    <a href="/essay" rel="tag">Essays</a>
+  </div>
+  <div class="title">
+    <h1>The Plug and Chug Developer Mentality</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Apr 23 2021</small>
+  </div>
+  <p>A couple of weeks ago, I wrote about my reservations with <a href="/trust">trusting open source</a>. But I think what’s even more funny is how developers often reach for the same tools no matter what project they’re working on. As soon as they work on a new project, they’ll install the same packages and libraries that they’ve used before or that everyone else in the industry is using, no matter the requirements of the project they’re working on.</p>
+
+<p>Consider two different web applications:</p>
+
+<p>One is a portal for customers to manage their relationship with a number of different business entities. The number of customers is very small, probably only a few hundred, coupled with only a few hundred business entities.</p>
+
+<p>The other is a social network where users post little snippets of text that can be shared with different parts of their own network. The number of users is expected to be well over a hundred thousand.</p>
+
+<p>These are two very different applications each with very different use cases, yet developers will often reach for the same tools without thinking.</p>
+
+<h2 id="asynchronous-processing">Asynchronous Processing</h2>
+
+<p>The very first tool they’ll reach for is some sort of asynchronous background job processing, which means they’ll want a message broker technology that’s different from their relational database, like Redis or RabbitMQ.</p>
+
+<p>But why?</p>
+
+<p>To me it doesn’t make sense to take on the overhead of learning and maintaining another additional technology unless the benefits outweigh the costs. An application with only a few hundred customers hitting it once or twice every day as opposed to a few hundred thousand have very different problems.</p>
+
+<p>Instead, I’d much rather use an already existing technology within my stack to manage things like background job processing. PostgreSQL is a technology that most developers already understand, as it’s almost always used as an application’s relational database, so using it to manage background jobs won’t add too much overhead.</p>
+
+<p>It’s also better to transition to a different technology later on down the road when the application <em>needs</em> it.</p>
+
+<h2 id="caching">Caching</h2>
+
+<p>The second tool developers will reach for is some sort of data store to manage their caching. Inevitably, developers will find that their application is “slow”, and so they’ll add a caching layer with <code class="language-plaintext highlighter-rouge">memcached</code> or Redis to speed their website back up to what they’re expecting.</p>
+
+<p>This is almost always the wrong solution to the problem.</p>
+
+<p>Again, instead of adding an additional technology to your stack, which means everyone on your team needs to learn this new technology, look at your already existing technology to see if you can optimize there instead.</p>
+
+<p>It’s almost always the case that developers are using some kind of ORM or object-relational mapping. Relational databases like PostgreSQL are <em>optimized</em> for retrieving data, but most ORM query builders are horrible at optimizing those queries in turn. So instead, I would write the data in the shape it wants to be so that it can be retrieved more efficiently. This is called <em>denormalization</em>.</p>
+
+<p>Instead something like this:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="nv">"users"</span> <span class="p">(</span>
+  <span class="nv">"user_id"</span> <span class="n">UUID</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="nv">"email_address"</span> <span class="nb">VARCHAR</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="nv">"name"</span> <span class="nb">VARCHAR</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="nv">"posts"</span> <span class="p">(</span>
+  <span class="nv">"post_id"</span> <span class="n">UUID</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="nv">"user_id"</span> <span class="n">UUID</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="nv">"text"</span> <span class="nb">VARCHAR</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+
+<span class="c1">-- When querying user profiles.</span>
+<span class="k">SELECT</span>
+  <span class="nv">"user_id"</span><span class="p">,</span>
+  <span class="nv">"email_address"</span><span class="p">,</span>
+  <span class="nv">"name"</span>
+<span class="k">FROM</span> <span class="nv">"users"</span><span class="p">;</span>
+
+<span class="c1">-- When querying posts with user information.</span>
+<span class="k">SELECT</span>
+  <span class="nv">"posts"</span><span class="p">.</span><span class="nv">"post_id"</span><span class="p">,</span>
+  <span class="nv">"users"</span><span class="p">.</span><span class="nv">"user_id"</span><span class="p">,</span>
+  <span class="nv">"users"</span><span class="p">.</span><span class="nv">"email_address"</span><span class="p">,</span>
+  <span class="nv">"users"</span><span class="p">.</span><span class="nv">"name"</span><span class="p">,</span>
+  <span class="nv">"posts"</span><span class="p">.</span><span class="nv">"text"</span>
+<span class="k">FROM</span> <span class="nv">"users"</span>
+<span class="k">INNER</span> <span class="k">JOIN</span> <span class="nv">"posts"</span> <span class="k">ON</span> <span class="nv">"users"</span><span class="p">.</span><span class="nv">"user_id"</span> <span class="o">=</span> <span class="nv">"posts"</span><span class="p">.</span><span class="nv">"user_id"</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>I may do something like this:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="nv">"users"</span> <span class="p">(</span>
+  <span class="nv">"user_id"</span> <span class="n">UUID</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="nv">"email_address"</span> <span class="nb">VARCHAR</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="nv">"name"</span> <span class="nb">VARCHAR</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="nv">"posts"</span> <span class="p">(</span>
+  <span class="nv">"post_id"</span> <span class="n">UUID</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="nv">"user_id"</span> <span class="n">UUID</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="nv">"text"</span> <span class="nb">VARCHAR</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="nv">"user_email_address"</span> <span class="nb">VARCHAR</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="nv">"user_name"</span> <span class="nb">VARCHAR</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+
+<span class="c1">-- When querying user profiles.</span>
+<span class="k">SELECT</span>
+  <span class="nv">"user_id"</span><span class="p">,</span>
+  <span class="nv">"email_address"</span><span class="p">,</span>
+  <span class="nv">"name"</span>
+<span class="k">FROM</span> <span class="nv">"users"</span><span class="p">;</span>
+
+<span class="c1">-- When querying posts with user information.</span>
+<span class="k">SELECT</span>
+  <span class="nv">"post_id"</span><span class="p">,</span>
+  <span class="nv">"user_id"</span><span class="p">,</span>
+  <span class="nv">"user_email_address"</span><span class="p">,</span>
+  <span class="nv">"user_name"</span><span class="p">,</span>
+  <span class="nv">"text"</span>
+<span class="k">FROM</span> <span class="nv">"posts"</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>The second set of queries is almost always more performant than the first. Though this may mean that some data is duplicated, this in itself is not a mistake. If you’re using a memory store like <code class="language-plaintext highlighter-rouge">memcached</code>, then you’re already duplicating data, in both PostgreSQL and <code class="language-plaintext highlighter-rouge">memcached</code>.</p>
+
+<p>And though this example may be a bit simplistic, imagine scenarios where the queries are even larger and more complicated, with nested inner queries and so on. With denormalization, you’re duplicating data with intention and design.</p>
+
+<h2 id="containerization">Containerization</h2>
+
+<p>The third tool developers will reach for is some sort of automated pipeline to deploy their code to their staging or production environment. And that tool will probably be Kubernetes.</p>
+
+<p>While I think container technology like Docker is useful, it sort of obfuscates the underlying operating system. Since most applications will be deployed to some kind of Linux server, it makes sense to me for most developers to have some facility with the same operating system they’ll be deploying to. Yet tools like Docker and Kubernetes obscures these things in favor of their own domain-specific language.</p>
+
+<p>Automated deployments is worth doing in my opinion, but Kubernetes is overkill for most use cases. It’s overly complex and requires a whole team to manage any infrastructure created with it.</p>
+
+<p>Much simpler in my mind to clone virtual machines into images and deploy those in auto-scaling groups. In almost all cases, I prefer working as closely to the bare metal machine as I can, and if that’s not possible, to the virtual machine in question. Tools like Docker and Kubernetes adds a layer of abstraction that just confuses things.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>So why do developers do this? Part of this I think is because developers read what other developers do and think that this must be The Way Things Are Done. Maybe they’re trying to pad out their resume by gaining experience in the latest, hottest technology.</p>
+
+<p>But what this all speaks to is a lack of design. Following the leader is not an adequate reason to do something. Just as each line of code needs to be added for a specific purpose, each technology introduced into a stack needs careful thought and intention.</p>
+
+<p>Otherwise, your project will end up like everyone else’s: a big pile of mud.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/getting-the-brown-out">&laquo; Getting the Brown Out</a>
+
+
+|
+
+
+  <a class="next" href="/event-sourcing-part-4">Event Sourcing, Part 4: View Data &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Event Sourcing, Part 3: Publish and Subscribe | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/event-sourcing-part-3" />
+  <meta property="og:title" content="Event Sourcing, Part 3: Publish and Subscribe | Joseph Choe" />
+  <meta property="og:description" content="  Note: Be sure to check out my 11+ hour video tutorial on event sourcing!" />
+  <meta property="og:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="Event Sourcing, Part 3: Publish and Subscribe | Joseph Choe" />
+  <meta name="twitter:description" content="  Note: Be sure to check out my 11+ hour video tutorial on event sourcing!" />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="parent">
+    <a href="/essay" rel="tag">Essays</a>
+  </div>
+  <div class="title">
+    <h1>Event Sourcing, Part 3: Publish and Subscribe</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Mar 26 2021</small>
+  </div>
+  <blockquote>
+  <p><strong>Note:</strong> Be sure to check out my 11+ hour video tutorial on <a href="/event-sourcing-tutorial">event sourcing</a>!</p>
+</blockquote>
+
+<p>Over the last two months, I’ve talked about how to build event sourced components. One of these components accepts <a href="/event-sourcing-part-1">user registrations</a>, while the other handles <a href="/event-sourcing-part-2">email uniqueness</a>.</p>
+
+<p>My goal in this sequence of essays is to demonstrate how to build event sourced systems. But before we can get into things like how to paint a user interface screen, we need a way for one component to communicate with the other. Let’s discuss that today, with code examples to demonstrate.</p>
+
+<h2 id="disclaimer">Disclaimer</h2>
+
+<p>This essay is a tool for learning. I’ve intended the below code for that purpose and <em>not</em> to be used in production environments. Read every line of code and make sure you understand each and every implication. Exercise your best judgement when taking code found on the Internet and putting it into your own codebase.</p>
+
+<h2 id="its-all-about-communication">It’s All about Communication</h2>
+
+<p>Event sourced components communicate through messages. These messages, whether commands or events, are recorded in a message store, which in Eventide’s case is a single immutable <code class="language-plaintext highlighter-rouge">messages</code> table in a PostgreSQL database.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">messages</span> <span class="p">(</span>
+  <span class="n">global_position</span> <span class="n">bigserial</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="k">position</span> <span class="nb">bigint</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">id</span> <span class="n">UUID</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="n">gen_random_uuid</span><span class="p">(),</span>
+  <span class="nb">time</span> <span class="nb">TIMESTAMP</span> <span class="k">WITHOUT</span> <span class="nb">TIME</span> <span class="k">ZONE</span> <span class="k">DEFAULT</span> <span class="p">(</span><span class="n">now</span><span class="p">()</span> <span class="k">AT</span> <span class="nb">TIME</span> <span class="k">ZONE</span> <span class="s1">'utc'</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="n">stream_name</span> <span class="nb">text</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="k">type</span> <span class="nb">text</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="k">data</span> <span class="n">jsonb</span><span class="p">,</span>
+  <span class="n">metadata</span> <span class="n">jsonb</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<p>Because of this, any service can read from any stream in the <code class="language-plaintext highlighter-rouge">messages</code> table and react to each message accordingly, without any knowledge of the producer of that message, except perhaps two things: the name of the stream they’re reading from and the contract of the messages therein.</p>
+
+<p>It’s a simple <code class="language-plaintext highlighter-rouge">SELECT</code> query. Indeed, the broadcasters of those messages can have no idea who exactly is reading their messages.</p>
+
+<p>This is typically known as the <strong>publish-subscribe</strong> messaging pattern.</p>
+
+<p>But not only that, services can also send messages to other specific services, if they know the command stream name of the service in question. For example, our user registration component from Part 1 has a command stream where it reads <code class="language-plaintext highlighter-rouge">Register</code> command messages and writes <code class="language-plaintext highlighter-rouge">Registered</code> events.</p>
+
+<p>But we don’t know where those messages are coming from. They could be coming from another service, or perhaps from a resource endpoint within a Rails controller. They could even be generated from a CSV file that’s uploaded to an FTP server.</p>
+
+<p>All we know for certain is that our components read messages from one stream and react to them by writing messages to another.</p>
+
+<p>With these tools in hand, we can have our components communicate with one another.</p>
+
+<h2 id="user-registration-revisited">User Registration, Revisited</h2>
+
+<p>For our purposes, the email uniqueness component is complete. It has no need to have any knowledge about anything outside of itself, therefore we won’t be making any changes to the component.</p>
+
+<p>However, in order for the user registration component to utilize email uniqueness, we’ll need to make a few changes to that component in particular.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Registration</span>
+  <span class="kp">include</span> <span class="no">Schema</span><span class="o">::</span><span class="no">DataStructure</span>
+
+  <span class="n">attribute</span> <span class="ss">:id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:user_id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:email_address</span><span class="p">,</span> <span class="no">String</span>
+
+  <span class="n">attribute</span> <span class="ss">:initiated_time</span><span class="p">,</span> <span class="no">Time</span>
+  <span class="n">attribute</span> <span class="ss">:email_accepted_time</span><span class="p">,</span> <span class="no">Time</span>
+  <span class="n">attribute</span> <span class="ss">:email_rejected_time</span><span class="p">,</span> <span class="no">Time</span>
+  <span class="n">attribute</span> <span class="ss">:registered_time</span><span class="p">,</span> <span class="no">Time</span>
+  <span class="n">attribute</span> <span class="ss">:cancelled_time</span><span class="p">,</span> <span class="no">Time</span>
+
+  <span class="k">def</span> <span class="nf">initiated?</span>
+    <span class="o">!</span><span class="n">initiated_time</span><span class="p">.</span><span class="nf">nil?</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">email_accepted?</span>
+    <span class="o">!</span><span class="n">email_accepted_time</span><span class="p">.</span><span class="nf">nil?</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">email_rejected?</span>
+    <span class="o">!</span><span class="n">email_rejected_time</span><span class="p">.</span><span class="nf">nil?</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">registered?</span>
+    <span class="o">!</span><span class="n">registered_time</span><span class="p">.</span><span class="nf">nil?</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">cancelled?</span>
+    <span class="o">!</span><span class="n">cancelled_time</span><span class="p">.</span><span class="nf">nil?</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The Registration entity has quite a bit more going on with it than the last time we saw it. The first three attributes are much the same. But next we have a series of <code class="language-plaintext highlighter-rouge">Time</code> attributes.</p>
+
+<p>This is because we need a way to track the different states the registration is in. We need to know when we’ve begun the registration process, and we need to know when the registration has completed, either from the email address being accepted or rejected.</p>
+
+<p>You can see this entity as a <strong>finite-state machine</strong>, with two divergent paths. One of them being from <code class="language-plaintext highlighter-rouge">Initiated</code> to <code class="language-plaintext highlighter-rouge">EmailAccepted</code>, and finally to <code class="language-plaintext highlighter-rouge">Registered</code>. But we also need to take into account the failure mode, where the email address was already claimed in a previous registration. That leads us down the path from <code class="language-plaintext highlighter-rouge">Initiated</code> to <code class="language-plaintext highlighter-rouge">EmailRejected</code>, and then to <code class="language-plaintext highlighter-rouge">Cancelled</code>.</p>
+
+<h2 id="messages">Messages</h2>
+
+<p>I’m not going to show the messages in full because many of them you’ve already seen before, so there’s not much to discuss there. But also because they’re basically copies of one another with different class names.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Register</span>
+  <span class="c1">## ...</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Initiated</span>
+  <span class="c1">## ...</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">EmailAccepted</span>
+  <span class="c1">## ...</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">EmailRejected</span>
+  <span class="c1">## ...</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Registered</span>
+  <span class="c1">## ...</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Cancelled</span>
+  <span class="c1">## ...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Like I’ve said before, software development is simply about copying data from one place to another. Rinse and repeat.</p>
+
+<p>Also, there are a lot of messages. Just imagine them all having the same exact attributes.</p>
+
+<h2 id="projection">Projection</h2>
+
+<p>The projection here is fairly straightforward. We have a bunch of events that copy data into the Registration entity.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Projection</span>
+  <span class="kp">include</span> <span class="no">EntityProjection</span>
+  <span class="kp">include</span> <span class="no">Messages</span><span class="o">::</span><span class="no">Events</span>
+
+  <span class="n">entity_name</span> <span class="ss">:registration</span>
+
+  <span class="n">apply</span> <span class="no">Initiated</span> <span class="k">do</span> <span class="o">|</span><span class="n">initiated</span><span class="o">|</span>
+    <span class="n">registration</span><span class="p">.</span><span class="nf">id</span> <span class="o">=</span> <span class="n">registered</span><span class="p">.</span><span class="nf">registration_id</span>
+    <span class="n">registration</span><span class="p">.</span><span class="nf">user_id</span> <span class="o">=</span> <span class="n">registered</span><span class="p">.</span><span class="nf">user_id</span>
+    <span class="n">registration</span><span class="p">.</span><span class="nf">email_address</span> <span class="o">=</span> <span class="n">registered</span><span class="p">.</span><span class="nf">email_address</span>
+    <span class="n">registration</span><span class="p">.</span><span class="nf">initiated_time</span> <span class="o">=</span> <span class="no">Clock</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">initiated</span><span class="p">.</span><span class="nf">time</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">apply</span> <span class="no">EmailAccepted</span> <span class="k">do</span> <span class="o">|</span><span class="n">email_accepted</span><span class="o">|</span>
+    <span class="n">registration</span><span class="p">.</span><span class="nf">email_accepted_time</span> <span class="o">=</span> <span class="no">Clock</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">email_accepted</span><span class="p">.</span><span class="nf">time</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">apply</span> <span class="no">EmailRejected</span> <span class="k">do</span> <span class="o">|</span><span class="n">email_rejected</span><span class="o">|</span>
+    <span class="n">registration</span><span class="p">.</span><span class="nf">email_rejected_time</span> <span class="o">=</span> <span class="no">Clock</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">email_rejected</span><span class="p">.</span><span class="nf">time</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">apply</span> <span class="no">Registered</span> <span class="k">do</span> <span class="o">|</span><span class="n">registered</span><span class="o">|</span>
+    <span class="n">registration</span><span class="p">.</span><span class="nf">registered_time</span> <span class="o">=</span> <span class="no">Clock</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">registered</span><span class="p">.</span><span class="nf">time</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">apply</span> <span class="no">Cancelled</span> <span class="k">do</span> <span class="o">|</span><span class="n">cancelled</span><span class="o">|</span>
+    <span class="n">registration</span><span class="p">.</span><span class="nf">cancelled_time</span> <span class="o">=</span> <span class="no">Clock</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">cancelled</span><span class="p">.</span><span class="nf">time</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Each event applies the <code class="language-plaintext highlighter-rouge">time</code> attribute to the entity in the corresponding place, which we know is important for our predicate methods.</p>
+
+<h2 id="handlers">Handlers</h2>
+
+<p>Here is where things wildly diverge from the original User Registration component. Instead of writing a <code class="language-plaintext highlighter-rouge">Registered</code> event in response to a <code class="language-plaintext highlighter-rouge">Register</code> command, we need to kick off our state machine by writing an <code class="language-plaintext highlighter-rouge">Initiated</code> event.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Handlers</span>
+  <span class="k">class</span> <span class="nc">Commands</span>
+    <span class="c1">## ...</span>
+
+    <span class="n">handle</span> <span class="no">Register</span> <span class="k">do</span> <span class="o">|</span><span class="n">register</span><span class="o">|</span>
+      <span class="n">registration_id</span> <span class="o">=</span> <span class="n">register</span><span class="p">.</span><span class="nf">registration_id</span>
+
+      <span class="n">registration</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">store</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">registration_id</span><span class="p">,</span> <span class="ss">include: :version</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="n">registration</span><span class="p">.</span><span class="nf">initiated?</span>
+        <span class="n">logger</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="ss">tag: :ignored</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"Command ignored (Command: </span><span class="si">#{</span><span class="n">register</span><span class="p">.</span><span class="nf">message_type</span><span class="si">}</span><span class="s2">, Registration ID: </span><span class="si">#{</span><span class="n">registration_id</span><span class="si">}</span><span class="s2">, User ID: </span><span class="si">#{</span><span class="n">register</span><span class="p">.</span><span class="nf">user_id</span><span class="si">}</span><span class="s2">)"</span> <span class="p">}</span>
+        <span class="k">return</span>
+      <span class="k">end</span>
+
+      <span class="n">time</span> <span class="o">=</span> <span class="n">clock</span><span class="p">.</span><span class="nf">iso8601</span>
+
+      <span class="n">stream_name</span> <span class="o">=</span> <span class="n">stream_name</span><span class="p">(</span><span class="n">registration_id</span><span class="p">)</span>
+
+      <span class="n">initiated</span> <span class="o">=</span> <span class="no">Initiated</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">register</span><span class="p">)</span>
+      <span class="n">initiated</span><span class="p">.</span><span class="nf">processed_time</span> <span class="o">=</span> <span class="n">time</span>
+      <span class="n">initiated</span><span class="p">.</span><span class="nf">metadata</span><span class="p">.</span><span class="nf">correlation_stream_name</span> <span class="o">=</span> <span class="n">stream_name</span>
+
+      <span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">initiated</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">,</span> <span class="ss">expected_version: </span><span class="n">version</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Most of the write logic you’ll see in this essay is something you’ve already seen before, only applied in different ways. But note the <code class="language-plaintext highlighter-rouge">correlation_stream_name</code> written to the <code class="language-plaintext highlighter-rouge">Initiated</code> event’s metadata.</p>
+
+<p>Within the Eventide toolkit, you have a lot of different metadata. For example, the causation stream name is used to denote which stream caused the message to be written. Another way to look at it is which stream did the preceding message come from? For example, the <code class="language-plaintext highlighter-rouge">Initiated</code> event’s causation stream name is the command stream name or <code class="language-plaintext highlighter-rouge">registration:command-{registration_id}</code>, while any message following the <code class="language-plaintext highlighter-rouge">Initiated</code> event will be <code class="language-plaintext highlighter-rouge">registration-{registration_id}</code>. And so on and so forth.</p>
+
+<p>The correlation stream however is a bit different. Every single message in the long chain of messages we’ll be writing will have the same correlation stream name, because the correlation stream name is simply copied over whenever one message follows another. Put another way, the correlation stream name allows us to know the originating stream name of any message in the chain, even if they should happen to span different components and different streams.</p>
+
+<p>Next, once we have written an <code class="language-plaintext highlighter-rouge">Initiated</code> event, we need to write a <code class="language-plaintext highlighter-rouge">Claim</code> command to the email uniqueness component, to let that component know we want to claim an email address.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Handlers</span>
+  <span class="k">class</span> <span class="nc">Events</span>
+    <span class="c1">## ...</span>
+
+    <span class="n">handle</span> <span class="no">Initiated</span> <span class="k">do</span> <span class="o">|</span><span class="n">initiated</span><span class="o">|</span>
+      <span class="n">registration_id</span> <span class="o">=</span> <span class="n">initiated</span><span class="p">.</span><span class="nf">registration_id</span>
+      <span class="n">user_id</span> <span class="o">=</span> <span class="n">initiated</span><span class="p">.</span><span class="nf">user_id</span>
+      <span class="n">email_address</span> <span class="o">=</span> <span class="n">initiated</span><span class="p">.</span><span class="nf">email_address</span>
+      <span class="n">encoded_email_address</span> <span class="o">=</span> <span class="n">encode_email_address</span><span class="p">(</span><span class="n">email_address</span><span class="p">)</span>
+
+      <span class="n">claim</span> <span class="o">=</span> <span class="no">Claim</span><span class="p">.</span><span class="nf">new</span>
+      <span class="n">claim</span><span class="p">.</span><span class="nf">metadata</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">initiated</span><span class="p">.</span><span class="nf">metadata</span><span class="p">)</span>
+
+      <span class="n">claim</span><span class="p">.</span><span class="nf">claim_id</span> <span class="o">=</span> <span class="n">registration_id</span>
+      <span class="n">claim</span><span class="p">.</span><span class="nf">encoded_email_address</span> <span class="o">=</span> <span class="n">encoded_email_address</span>
+      <span class="n">claim</span><span class="p">.</span><span class="nf">email_address</span> <span class="o">=</span> <span class="n">email_address</span>
+      <span class="n">claim</span><span class="p">.</span><span class="nf">user_id</span> <span class="o">=</span> <span class="n">user_id</span>
+
+      <span class="n">stream_name</span> <span class="o">=</span> <span class="s2">"userEmailAddress:command-</span><span class="si">#{</span><span class="n">encoded_email_address</span><span class="si">}</span><span class="s2">"</span>
+
+      <span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">claim</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">)</span>
+    <span class="k">end</span>
+</code></pre></div></div>
+
+<p>We write to the User Email Address command stream, which then starts that process. You may be wondering why there’s no idempotence protection within this event’s handler. If the Registration component is stopped for whatever reason and reads the <code class="language-plaintext highlighter-rouge">Initiated</code>  event again, a second or third <code class="language-plaintext highlighter-rouge">Claim</code> message will be written.</p>
+
+<p>That’s okay because we <em>expect</em> commands to be written twice. The idempotence protection is already in place within the User Email Address component. It’s unnecessary to have it here, too.</p>
+
+<p>More importantly, there’s no way for the <em>Registration component</em> to know whether a message was already sent to the User Email Address component. It has no access to the User Email Address component’s entity stream or projections, so it cannot make decisions one way or another.</p>
+
+<p>In any case, from the last essay we know we’re expecting either a <code class="language-plaintext highlighter-rouge">Claimed</code> event to be written to the User Email Address entity stream or a <code class="language-plaintext highlighter-rouge">ClaimRejected</code> event.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Handlers</span>
+  <span class="k">module</span> <span class="nn">UserEmailAddress</span>
+    <span class="k">class</span> <span class="nc">Events</span>
+      <span class="kp">include</span> <span class="no">Log</span><span class="o">::</span><span class="no">Dependency</span>
+      <span class="kp">include</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">Handle</span>
+      <span class="kp">include</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">StreamName</span>
+      <span class="kp">include</span> <span class="no">Messages</span><span class="o">::</span><span class="no">Events</span>
+
+      <span class="n">dependency</span> <span class="ss">:write</span><span class="p">,</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">Postgres</span><span class="o">::</span><span class="no">Write</span>
+      <span class="n">dependency</span> <span class="ss">:clock</span><span class="p">,</span> <span class="no">Clock</span><span class="o">::</span><span class="no">UTC</span>
+      <span class="n">dependency</span> <span class="ss">:store</span><span class="p">,</span> <span class="no">Store</span>
+
+      <span class="k">def</span> <span class="nf">configure</span>
+        <span class="no">Messaging</span><span class="o">::</span><span class="no">Postgres</span><span class="o">::</span><span class="no">Write</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+        <span class="no">Clock</span><span class="o">::</span><span class="no">UTC</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+        <span class="no">Store</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="n">category</span> <span class="ss">:registration</span>
+
+      <span class="n">handle</span> <span class="no">Claimed</span> <span class="k">do</span> <span class="o">|</span><span class="n">claimed</span><span class="o">|</span>
+        <span class="n">correlation_stream_name</span> <span class="o">=</span> <span class="n">claimed</span><span class="p">.</span><span class="nf">metadata</span><span class="p">.</span><span class="nf">correlation_stream_name</span>
+        <span class="n">registration_id</span> <span class="o">=</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">StreamName</span><span class="p">.</span><span class="nf">get_id</span><span class="p">(</span><span class="n">correlation_stream_name</span><span class="p">)</span>
+
+        <span class="n">registration</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">store</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">registration_id</span><span class="p">,</span> <span class="ss">include: :version</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">registration</span><span class="p">.</span><span class="nf">email_claimed?</span>
+          <span class="n">logger</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="ss">tag: :ignored</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"Event ignored (Event: </span><span class="si">#{</span><span class="n">claimed</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">, Registration ID: </span><span class="si">#{</span><span class="n">registration_id</span><span class="si">}</span><span class="s2">, Player ID: </span><span class="si">#{</span><span class="n">claimed</span><span class="p">.</span><span class="nf">player_id</span><span class="si">}</span><span class="s2">)"</span> <span class="p">}</span>
+          <span class="k">return</span>
+        <span class="k">end</span>
+
+        <span class="n">email_claimed</span> <span class="o">=</span> <span class="no">EmailClaimed</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">claimed</span><span class="p">,</span> <span class="ss">exclude: </span><span class="p">[</span>
+          <span class="ss">:encoded_email_address</span><span class="p">,</span>
+          <span class="ss">:sequence</span>
+        <span class="p">])</span>
+        <span class="n">email_claimed</span><span class="p">.</span><span class="nf">registration_id</span> <span class="o">=</span> <span class="n">registration_id</span>
+        <span class="n">email_claimed</span><span class="p">.</span><span class="nf">processed_time</span> <span class="o">=</span> <span class="n">clock</span><span class="p">.</span><span class="nf">iso8601</span>
+
+        <span class="n">stream_name</span> <span class="o">=</span> <span class="n">stream_name</span><span class="p">(</span><span class="n">registration_id</span><span class="p">)</span>
+
+        <span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">email_claimed</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">,</span> <span class="ss">expected_version: </span><span class="n">version</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="n">handle</span> <span class="no">ClaimRejected</span> <span class="k">do</span> <span class="o">|</span><span class="n">claim_rejected</span><span class="o">|</span>
+        <span class="n">correlation_stream_name</span> <span class="o">=</span> <span class="n">claim_rejected</span><span class="p">.</span><span class="nf">metadata</span><span class="p">.</span><span class="nf">correlation_stream_name</span>
+        <span class="n">registration_id</span> <span class="o">=</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">StreamName</span><span class="p">.</span><span class="nf">get_id</span><span class="p">(</span><span class="n">correlation_stream_name</span><span class="p">)</span>
+
+        <span class="n">registration</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">store</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">registration_id</span><span class="p">,</span> <span class="ss">include: :version</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">registration</span><span class="p">.</span><span class="nf">email_rejected?</span>
+          <span class="n">logger</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="ss">tag: :ignored</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"Event ignored (Event: </span><span class="si">#{</span><span class="n">claim_rejected</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">, Registration ID: </span><span class="si">#{</span><span class="n">registration_id</span><span class="si">}</span><span class="s2">, Player ID: </span><span class="si">#{</span><span class="n">claim_rejected</span><span class="p">.</span><span class="nf">player_id</span><span class="si">}</span><span class="s2">)"</span> <span class="p">}</span>
+          <span class="k">return</span>
+        <span class="k">end</span>
+
+        <span class="n">email_rejected</span> <span class="o">=</span> <span class="no">EmailRejected</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">claim_rejected</span><span class="p">,</span> <span class="ss">exclude: </span><span class="p">[</span>
+          <span class="ss">:encoded_email_address</span><span class="p">,</span>
+          <span class="ss">:sequence</span>
+        <span class="p">])</span>
+        <span class="n">email_rejected</span><span class="p">.</span><span class="nf">registration_id</span> <span class="o">=</span> <span class="n">registration_id</span>
+        <span class="n">email_rejected</span><span class="p">.</span><span class="nf">processed_time</span> <span class="o">=</span> <span class="n">clock</span><span class="p">.</span><span class="nf">iso8601</span>
+
+        <span class="n">stream_name</span> <span class="o">=</span> <span class="n">stream_name</span><span class="p">(</span><span class="n">registration_id</span><span class="p">)</span>
+
+        <span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">email_rejected</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">,</span> <span class="ss">expected_version: </span><span class="n">version</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>What’s interesting here is the usage of the <code class="language-plaintext highlighter-rouge">correlation_stream_name</code>. Remember, when the correlation stream name was set in the <code class="language-plaintext highlighter-rouge">Initiated</code> event, any subsequent event written to any stream had the same correlation stream name copied over. We know that any <code class="language-plaintext highlighter-rouge">Claimed</code> or <code class="language-plaintext highlighter-rouge">ClaimRejected</code> event with a correlation stream name corresponding to the Registration stream originated within that component.</p>
+
+<p>There may be any number of components and services interested in claiming email addresses, and we certainly don’t want to read those into our Registration component. So this is how we know for certain we’re only dealing with messages that originated within the Registration component.</p>
+
+<p>The correlation stream name is also how we retrieve the <code class="language-plaintext highlighter-rouge">registration_id</code>. Remember that the email uniqueness component has no knowledge of user registrations. But because the correlation stream name within the messages’ metadata is copied over from message to message, we can retrieve it here.</p>
+
+<p>In both cases, we write an <code class="language-plaintext highlighter-rouge">EmailAccepted</code> and <code class="language-plaintext highlighter-rouge">EmailRejected</code>, respectively. This allows us to preserve idempotence, because now the Registration knows whether it read the <code class="language-plaintext highlighter-rouge">Claimed</code> or <code class="language-plaintext highlighter-rouge">ClaimRejected</code> event previously or not.</p>
+
+<p>Once we have either one of those events, we can write a <code class="language-plaintext highlighter-rouge">Registered</code> or <code class="language-plaintext highlighter-rouge">Cancelled</code> event, thus ending the registration process.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Handlers</span>
+  <span class="k">class</span> <span class="nc">Events</span>
+    <span class="c1">## ...</span>
+
+    <span class="n">handle</span> <span class="no">EmailAccepted</span> <span class="k">do</span> <span class="o">|</span><span class="n">email_accepted</span><span class="o">|</span>
+      <span class="n">registration_id</span> <span class="o">=</span> <span class="n">email_accepted</span><span class="p">.</span><span class="nf">registration_id</span>
+
+      <span class="n">registration</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">store</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">registration_id</span><span class="p">,</span> <span class="ss">include: :version</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="n">registration</span><span class="p">.</span><span class="nf">registered?</span>
+        <span class="n">logger</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="ss">tag: :ignored</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"Event ignored (Event: </span><span class="si">#{</span><span class="n">email_accepted</span><span class="p">.</span><span class="nf">message_type</span><span class="si">}</span><span class="s2">, Registration ID: </span><span class="si">#{</span><span class="n">registration_id</span><span class="si">}</span><span class="s2">, User ID: </span><span class="si">#{</span><span class="n">email_accepted</span><span class="p">.</span><span class="nf">user_id</span><span class="si">}</span><span class="s2">)"</span> <span class="p">}</span>
+        <span class="k">return</span>
+      <span class="k">end</span>
+
+      <span class="n">time</span> <span class="o">=</span> <span class="n">clock</span><span class="p">.</span><span class="nf">iso8601</span>
+
+      <span class="n">stream_name</span> <span class="o">=</span> <span class="n">stream_name</span><span class="p">(</span><span class="n">registration_id</span><span class="p">)</span>
+
+      <span class="n">registered</span> <span class="o">=</span> <span class="no">Registered</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">email_accepted</span><span class="p">,</span> <span class="ss">exclude: </span><span class="p">[</span>
+        <span class="ss">:claim_id</span><span class="p">,</span>
+        <span class="ss">:time</span><span class="p">,</span>
+        <span class="ss">:processed_time</span>
+      <span class="p">])</span>
+      <span class="n">registered</span><span class="p">.</span><span class="nf">time</span> <span class="o">=</span> <span class="n">time</span>
+
+      <span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">registered</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">,</span> <span class="ss">expected_version: </span><span class="n">version</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">handle</span> <span class="no">EmailRejected</span> <span class="k">do</span> <span class="o">|</span><span class="n">email_rejected</span><span class="o">|</span>
+      <span class="n">registration_id</span> <span class="o">=</span> <span class="n">email_rejected</span><span class="p">.</span><span class="nf">registration_id</span>
+
+      <span class="n">registration</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">store</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">registration_id</span><span class="p">,</span> <span class="ss">include: :version</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="n">registration</span><span class="p">.</span><span class="nf">cancelled?</span>
+        <span class="n">logger</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="ss">tag: :ignored</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"Event ignored (Event: </span><span class="si">#{</span><span class="n">email_rejected</span><span class="p">.</span><span class="nf">message_type</span><span class="si">}</span><span class="s2">, Registration ID: </span><span class="si">#{</span><span class="n">registration_id</span><span class="si">}</span><span class="s2">, User ID: </span><span class="si">#{</span><span class="n">email_rejected</span><span class="p">.</span><span class="nf">user_id</span><span class="si">}</span><span class="s2">)"</span> <span class="p">}</span>
+        <span class="k">return</span>
+      <span class="k">end</span>
+
+      <span class="n">time</span> <span class="o">=</span> <span class="n">clock</span><span class="p">.</span><span class="nf">iso8601</span>
+
+      <span class="n">stream_name</span> <span class="o">=</span> <span class="n">stream_name</span><span class="p">(</span><span class="n">registration_id</span><span class="p">)</span>
+
+      <span class="n">cancelled</span> <span class="o">=</span> <span class="no">Cancelled</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">email_rejected</span><span class="p">,</span> <span class="ss">exclude: </span><span class="p">[</span>
+        <span class="ss">:claim_id</span><span class="p">,</span>
+        <span class="ss">:time</span><span class="p">,</span>
+        <span class="ss">:processed_time</span>
+      <span class="p">])</span>
+      <span class="n">cancelled</span><span class="p">.</span><span class="nf">time</span> <span class="o">=</span> <span class="n">time</span>
+
+      <span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">cancelled</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">,</span> <span class="ss">expected_version: </span><span class="n">version</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>With these in hand, we can inform the user that their registration was either successful or not. We may even be able to tell them the reason their registration failed was that their email address was already in use.</p>
+
+<p>With the publish-subscribe pattern, you can imagine that we can take this even further. For example, a Welcome Email component could subscribe to any published <code class="language-plaintext highlighter-rouge">Registered</code> events and send onboarding emails to the user.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The two components are now functionally complete. We have a user registration component that takes email uniqueness into account by communicating with a component created specifically for that purpose.</p>
+
+<p>But how do we use these components in a web or native application? How do you paint pixels on a screen with an event sourced architecture?</p>
+
+<p>That’s what we’ll talk about next month.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/no-pokemon-in-this-arena">&laquo; No Pokémon in This Arena</a>
+
+
+|
+
+
+  <a class="next" href="/trust">Trust No One &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>

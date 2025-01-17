@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>My Ruby Development Environment | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/ruby-development-environment" />
+  <meta property="og:title" content="My Ruby Development Environment | Joseph Choe" />
+  <meta property="og:description" content="When I come into a new Ruby project, whether that be through a new job or contract work or open source project, each one will generally follow the same principles, in that they’ll use the same pack..." />
+  <meta property="og:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="My Ruby Development Environment | Joseph Choe" />
+  <meta name="twitter:description" content="When I come into a new Ruby project, whether that be through a new job or contract work or open source project, each one will generally follow the same principles, in that they’ll use the same pack..." />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="title">
+    <h1>My Ruby Development Environment</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Feb 12 2021</small>
+  </div>
+  <p>When I come into a new Ruby project, whether that be through a new job or contract work or open source project, each one will generally follow the same principles, in that they’ll use the same package manager, they’ll have a <code class="language-plaintext highlighter-rouge">Gemfile</code> to note dependencies, and so forth.</p>
+
+<p>But I want to avoid polluting my own local gems with those from whatever project I’m working on. Each project’s configuration may be unique and require dependencies that are unique to their project. Installing gems to the local system can cause problems in other projects. What I want is to <strong>control</strong> my project’s dependencies without needing to rely on external tools.</p>
+
+<p>Here’s how I do that.</p>
+
+<h2 id="credit">Credit</h2>
+
+<p>I want to note that most of these scripts below come from Eventide’s own <a href="https://github.com/eventide-project">repositories</a>. Be sure to check them out!</p>
+
+<h2 id="local-installation">Local Installation</h2>
+
+<p>When I install gems, I make sure to install with the following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bundle <span class="nb">install</span> <span class="nt">--standalone</span> <span class="nt">--path</span><span class="o">=</span>./gems
+</code></pre></div></div>
+
+<p>Let’s start with the second option, <code class="language-plaintext highlighter-rouge">--path=./gems</code>, which installs the gems into the directory specified, which in this case is the <code class="language-plaintext highlighter-rouge">gems</code> directory. Some might install gems into the <code class="language-plaintext highlighter-rouge">vendor</code> directory, which is a little confusing to me. Gems go in the <code class="language-plaintext highlighter-rouge">gems</code> directory, which means there is no confusion.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">--standalone</code> option obviates the need for <code class="language-plaintext highlighter-rouge">rubygems</code> or <code class="language-plaintext highlighter-rouge">bundler</code> at runtime by generating a <code class="language-plaintext highlighter-rouge">gems/bundler/setup.rb</code> file. Here’s an example of a file generated:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># gems/bundler/setup.rb</span>
+
+<span class="nb">require</span> <span class="s1">'rbconfig'</span>
+<span class="n">ruby_engine</span> <span class="o">=</span> <span class="no">RUBY_ENGINE</span>
+<span class="n">ruby_version</span> <span class="o">=</span> <span class="no">RbConfig</span><span class="o">::</span><span class="no">CONFIG</span><span class="p">[</span><span class="s2">"ruby_version"</span><span class="p">]</span>
+<span class="n">path</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">expand_path</span><span class="p">(</span><span class="s1">'..'</span><span class="p">,</span> <span class="kp">__FILE__</span><span class="p">)</span>
+<span class="vg">$:</span><span class="p">.</span><span class="nf">unshift</span> <span class="s2">"</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">/"</span>
+<span class="vg">$:</span><span class="p">.</span><span class="nf">unshift</span> <span class="s2">"</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">/../</span><span class="si">#{</span><span class="n">ruby_engine</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">ruby_version</span><span class="si">}</span><span class="s2">/gems/evt-virtual-2.0.1.0/lib"</span>
+<span class="vg">$:</span><span class="p">.</span><span class="nf">unshift</span> <span class="s2">"</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">/../</span><span class="si">#{</span><span class="n">ruby_engine</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">ruby_version</span><span class="si">}</span><span class="s2">/gems/rack-2.2.3/lib"</span>
+<span class="vg">$:</span><span class="p">.</span><span class="nf">unshift</span> <span class="s2">"</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">/../../lib"</span>
+<span class="vg">$:</span><span class="p">.</span><span class="nf">unshift</span> <span class="s2">"</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">/../</span><span class="si">#{</span><span class="n">ruby_engine</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">ruby_version</span><span class="si">}</span><span class="s2">/gems/test_bench-fixture-1.3.1.1/lib"</span>
+<span class="vg">$:</span><span class="p">.</span><span class="nf">unshift</span> <span class="s2">"</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">/../</span><span class="si">#{</span><span class="n">ruby_engine</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">ruby_version</span><span class="si">}</span><span class="s2">/gems/test_bench-1.2.0.5/lib"</span>
+</code></pre></div></div>
+
+<p>What this does is add each gem location to the <code class="language-plaintext highlighter-rouge">$LOAD_PATH</code> array so that these gems can be loaded more easily with the <code class="language-plaintext highlighter-rouge">require</code> keyword.</p>
+
+<h2 id="what-about-rvm-gemsets">What about RVM Gemsets?</h2>
+
+<p>I don’t really use RVM in my own Ruby workflow, mostly because working with RVM is a bit of a faff. But I also don’t like that the gems are installed to some obscure hidden directory. Much better, in my opinion, to install them in the project directory, as close to the code as possible.</p>
+
+<h2 id="ignoring-files">Ignoring Files</h2>
+
+<p>With a single command, we’ve generated two directories, <code class="language-plaintext highlighter-rouge">.bundle/</code> and <code class="language-plaintext highlighter-rouge">gems/</code>. We don’t actually want to check these into the project, so we add them to our <code class="language-plaintext highlighter-rouge">.gitignore</code> file:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># .gitignore</span>
+
+<span class="p">.</span><span class="nf">bundle</span><span class="o">/</span>
+<span class="n">gems</span>
+</code></pre></div></div>
+
+<p>But now we have changes to the <code class="language-plaintext highlighter-rouge">.gitignore</code> file. Do we check that in?</p>
+
+<h2 id="my-personal-local-branch">My Personal Local Branch</h2>
+
+<p>Note: I’m assuming you use <code class="language-plaintext highlighter-rouge">git</code> in your own workflow.</p>
+
+<p>Personally, I only make structural changes like this to a project I have control over. If I’m just one contributor among many, then I have less say to shake things up. So, instead I build my own local branch and push changes in the following manner.</p>
+
+<p>First, let’s make our own local branch:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout <span class="nt">-b</span> local-build
+</code></pre></div></div>
+
+<p>We now have our own local branch that diverges from the <code class="language-plaintext highlighter-rouge">master</code> branch. I then add the following file:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># load_path.rb</span>
+
+<span class="n">bundler_standalone_loader</span> <span class="o">=</span> <span class="s1">'gems/bundler/setup'</span>
+
+<span class="k">begin</span>
+  <span class="nb">require_relative</span> <span class="n">bundler_standalone_loader</span>
+<span class="k">rescue</span> <span class="no">LoadError</span>
+  <span class="nb">warn</span> <span class="s2">"WARNING: Standalone bundle loader is not at </span><span class="si">#{</span><span class="n">bundler_standalone_loader</span><span class="si">}</span><span class="s2">. Using Bundler to load gems."</span>
+  <span class="nb">require</span> <span class="s2">"bundler/setup"</span>
+  <span class="no">Bundler</span><span class="p">.</span><span class="nf">setup</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>This file will load the standalone bundle file we generated earlier. Otherwise, it will load the gems via Bundler.</p>
+
+<p>Then, we need to add the following to our <code class="language-plaintext highlighter-rouge">config/application.rb</code> file, if we’re in a Rails project:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># config/application.rb</span>
+
+<span class="nb">require_relative</span> <span class="s1">'../load_path'</span>
+<span class="nb">require_relative</span> <span class="s1">'boot'</span>
+</code></pre></div></div>
+
+<p>This will reference the earlier <code class="language-plaintext highlighter-rouge">load_path.rb</code> file. Then, we can run the Rails application as normal, without the need for Bundler.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bin/rails server
+</code></pre></div></div>
+
+<p>Finally, I’ll commit all the changes I’ve made into a single commit:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git commit <span class="nt">-m</span> <span class="s2">"Local build"</span>
+</code></pre></div></div>
+
+<p>This includes the <code class="language-plaintext highlighter-rouge">.gitignore</code>, <code class="language-plaintext highlighter-rouge">load_path.rb</code>, and <code class="language-plaintext highlighter-rouge">config/application.rb</code> files.</p>
+
+<h2 id="development">Development</h2>
+
+<p>During the normal course of development, I’ll make commits to my <code class="language-plaintext highlighter-rouge">local-build</code> branch and then move them to a branch that I can push to the remote repository. Remember that other people might not have our structural changes from the <code class="language-plaintext highlighter-rouge">local-build</code> branch, so we want to avoid affecting downstream users.</p>
+
+<p>After I’m done making whatever commits I need for the feature, I’ll do the following:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout master
+git pull
+git checkout <span class="nt">-b</span> new-feature
+git cherry-pick &lt;commit-sha&gt;
+git push <span class="nt">-u</span> origin new-feature
+</code></pre></div></div>
+
+<p>I want to get the latest changes from <code class="language-plaintext highlighter-rouge">master</code> before pushing my own changes, which is why I’m pulling from the <code class="language-plaintext highlighter-rouge">master</code> branch. Then, I make a new branch for the feature and cherry-pick the commits I need from my <code class="language-plaintext highlighter-rouge">local-build</code> branch.</p>
+
+<p>Finally, I push my branch to the remote repository.</p>
+
+<h2 id="updating-my-local-branch">Updating My Local Branch</h2>
+
+<p>I don’t want my <code class="language-plaintext highlighter-rouge">local-build</code> branch to remain out of date with the changes in <code class="language-plaintext highlighter-rouge">master</code>, so I’ll simply rebase my local branch with <code class="language-plaintext highlighter-rouge">master</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git checkout master
+git pull
+git checkout local-build
+git rebase master
+</code></pre></div></div>
+
+<p>By doing this, I make sure that my own changes, especially that “Local Build” commit, don’t become buried in newer changes from other contributors.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The main reason I do this though is so I keep gems and dependencies isolated to their local project directory, especially if I’m working in a project I don’t have much control over. This is <em>especially</em> useful when I’m working on multiple such projects and need to keep dependencies separate from one another.</p>
+
+<p>It’s a bit more complicated and may not work for everyone. But having control over my gems is important enough for me to do the extra work.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/technical-assessments-are-dumb">&laquo; Technical Assessments Are Dumb</a>
+
+
+|
+
+
+  <a class="next" href="/snooping">Be a Snoop &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>

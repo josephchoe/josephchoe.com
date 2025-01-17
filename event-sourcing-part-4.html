@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Event Sourcing, Part 4: View Data | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/event-sourcing-part-4" />
+  <meta property="og:title" content="Event Sourcing, Part 4: View Data | Joseph Choe" />
+  <meta property="og:description" content="  Note: Be sure to check out my 11+ hour video tutorial on event sourcing!" />
+  <meta property="og:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="Event Sourcing, Part 4: View Data | Joseph Choe" />
+  <meta name="twitter:description" content="  Note: Be sure to check out my 11+ hour video tutorial on event sourcing!" />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="parent">
+    <a href="/essay" rel="tag">Essays</a>
+  </div>
+  <div class="title">
+    <h1>Event Sourcing, Part 4: View Data</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Apr 30 2021</small>
+  </div>
+  <blockquote>
+  <p><strong>Note:</strong> Be sure to check out my 11+ hour video tutorial on <a href="/event-sourcing-tutorial">event sourcing</a>!</p>
+</blockquote>
+
+<p>It took a while, but we’re finally here.</p>
+
+<p>We’ve built a component that accepted <a href="/event-sourcing-part-1">user registrations</a> and one that handled <a href="/event-sourcing-part-2">email uniqueness</a>. We designed them to communicate with each other through the <a href="/event-sourcing-part-3">publish and subscribe</a> messaging pattern. But this is all pointless if our applications can’t use the events in some way to show data to users.</p>
+
+<p>Part of what makes event sourced architecture so difficult to understand, as opposed to ORM or object-relational mapping so easy, is that there’s a lot of moving parts. With an ORM, you can often write a single line of code to write to the database and retrieve a tuple. With an event sourced architecture, it takes a lot of work to get to this point.</p>
+
+<p>But we can finally reach that last hurdle.</p>
+
+<h2 id="disclaimer">Disclaimer</h2>
+
+<p>This essay is a tool for learning. I stress this every time, but code found on the Internet should be evaluated and understood on its merits and adapted for a specific use case, not copied and pasted wholesale.</p>
+
+<h2 id="view-data">View Data</h2>
+
+<p>It would be very difficult for our applications to interact directly with our entity streams. Remember that it’s an append-only log of all the transactions or changes to state within our application. We cannot just query each stream to ask for all changes and process them with each query.</p>
+
+<p>Instead, we need to project our final state or view data to a database, whether that be PostgreSQL, Redis, or some other data store, and our application can query that instead.</p>
+
+<p>Let’s look at a simple registrations table in PostgreSQL:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="nv">"registrations"</span> <span class="p">(</span>
+  <span class="nv">"registration_id"</span> <span class="n">UUID</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+  <span class="nv">"user_id"</span> <span class="n">UUID</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="nv">"email_address"</span> <span class="nb">varchar</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="nv">"is_email_accepted"</span> <span class="nb">BOOLEAN</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="nv">"is_registered"</span> <span class="nb">BOOLEAN</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<p>If the above registrations table looks like our Registration entity from previous essays, that is by design:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Registration</span>
+  <span class="kp">include</span> <span class="no">Schema</span><span class="o">::</span><span class="no">DataStructure</span>
+
+  <span class="n">attribute</span> <span class="ss">:id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:user_id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:email_address</span><span class="p">,</span> <span class="no">String</span>
+
+  <span class="n">attribute</span> <span class="ss">:initiated_time</span><span class="p">,</span> <span class="no">Time</span>
+  <span class="n">attribute</span> <span class="ss">:email_accepted_time</span><span class="p">,</span> <span class="no">Time</span>
+  <span class="n">attribute</span> <span class="ss">:email_rejected_time</span><span class="p">,</span> <span class="no">Time</span>
+  <span class="n">attribute</span> <span class="ss">:registered_time</span><span class="p">,</span> <span class="no">Time</span>
+  <span class="n">attribute</span> <span class="ss">:cancelled_time</span><span class="p">,</span> <span class="no">Time</span>
+
+  <span class="c1">## ...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Yet how do populate the registrations table?</p>
+
+<h2 id="populating-view-data">Populating View Data</h2>
+
+<p>It should come as no surprise that we use the same mechanism we used to process commands and events: components. Because we have access to the Registration component’s events, we can use those same events to trigger changes in our view database.</p>
+
+<p>I’m not going to go into the specific entities, commands, events, projections, et cetera for our new Registration view data component, because that would just be retreading old ground. But let’s look at the handler and see how it differs from other components:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Handlers</span>
+  <span class="k">module</span> <span class="nn">Registration</span>
+    <span class="k">class</span> <span class="nc">Events</span>
+      <span class="c1">## ..</span>
+
+      <span class="n">category</span> <span class="ss">:registration_view_data</span>
+
+      <span class="n">handle</span> <span class="o">::</span><span class="no">Registration</span><span class="o">::</span><span class="no">Client</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Events</span><span class="o">::</span><span class="no">EmailRejected</span> <span class="k">do</span> <span class="o">|</span><span class="n">registration_email_rejected</span><span class="o">|</span>
+        <span class="n">registration_id</span> <span class="o">=</span> <span class="n">registration_email_rejected</span><span class="p">.</span><span class="nf">registration_id</span>
+
+        <span class="n">registration</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">store</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">registration_id</span><span class="p">,</span> <span class="ss">include: :version</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">registration</span><span class="p">.</span><span class="nf">email_rejected?</span>
+          <span class="n">logger</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="ss">tag: :ignored</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"Event ignored (Event: </span><span class="si">#{</span><span class="n">registration_email_rejected</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">, Registration ID: </span><span class="si">#{</span><span class="n">registration_id</span><span class="si">}</span><span class="s2">, User ID: </span><span class="si">#{</span><span class="n">registration_email_rejected</span><span class="p">.</span><span class="nf">user_id</span><span class="si">}</span><span class="s2">)"</span> <span class="p">}</span>
+          <span class="k">return</span>
+        <span class="k">end</span>
+
+        <span class="c1"># Insert tuple into registrations table or other side effects.</span>
+        <span class="c1">## ..</span>
+
+        <span class="n">time</span> <span class="o">=</span> <span class="n">clock</span><span class="p">.</span><span class="nf">iso8601</span>
+
+        <span class="n">email_rejected</span> <span class="o">=</span> <span class="no">EmailRejected</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">registration_email_rejected</span><span class="p">,</span> <span class="ss">exclude: </span><span class="p">[</span><span class="ss">:claim_id</span><span class="p">])</span>
+        <span class="n">email_rejected</span><span class="p">.</span><span class="nf">processed_time</span> <span class="o">=</span> <span class="n">time</span>
+
+        <span class="n">stream_name</span> <span class="o">=</span> <span class="n">stream_name</span><span class="p">(</span><span class="n">registration_id</span><span class="p">)</span>
+
+        <span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">email_rejected</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">,</span> <span class="ss">expected_version: </span><span class="n">version</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="n">handle</span> <span class="o">::</span><span class="no">Registration</span><span class="o">::</span><span class="no">Client</span><span class="o">::</span><span class="no">Messages</span><span class="o">::</span><span class="no">Events</span><span class="o">::</span><span class="no">Registered</span> <span class="k">do</span> <span class="o">|</span><span class="n">registration_registered</span><span class="o">|</span>
+        <span class="n">registration_id</span> <span class="o">=</span> <span class="n">registration_registered</span><span class="p">.</span><span class="nf">registration_id</span>
+
+        <span class="n">registration</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">store</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">registration_id</span><span class="p">,</span> <span class="ss">include: :version</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">registration</span><span class="p">.</span><span class="nf">registered?</span>
+          <span class="n">logger</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="ss">tag: :ignored</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"Event ignored (Event: </span><span class="si">#{</span><span class="n">registration_registered</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">name</span><span class="si">}</span><span class="s2">, Registration ID: </span><span class="si">#{</span><span class="n">registration_id</span><span class="si">}</span><span class="s2">, User ID: </span><span class="si">#{</span><span class="n">registration_registered</span><span class="p">.</span><span class="nf">user_id</span><span class="si">}</span><span class="s2">)"</span> <span class="p">}</span>
+          <span class="k">return</span>
+        <span class="k">end</span>
+
+        <span class="c1"># Insert tuple into registrations table or other side effects.  </span>
+        <span class="c1">## ..</span>
+
+        <span class="n">time</span> <span class="o">=</span> <span class="n">clock</span><span class="p">.</span><span class="nf">iso8601</span>
+
+        <span class="n">registered</span> <span class="o">=</span> <span class="no">Registered</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">registration_registered</span><span class="p">)</span>
+        <span class="n">registered</span><span class="p">.</span><span class="nf">processed_time</span> <span class="o">=</span> <span class="n">time</span>
+
+        <span class="n">stream_name</span> <span class="o">=</span> <span class="n">stream_name</span><span class="p">(</span><span class="n">registration_id</span><span class="p">)</span>
+
+        <span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">registered</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">,</span> <span class="ss">expected_version: </span><span class="n">version</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>After we’ve retrieved the entity from the store, but before we write a new event to the Registration view data stream, we insert a tuple into our registrations table (or execute any other side effect). This ensures that any side effects are protected by the optimistic locking we have in place, and therefore executed only once.</p>
+
+<p>We can use any database tool, including <code class="language-plaintext highlighter-rouge">ActiveRecord</code> or <code class="language-plaintext highlighter-rouge">Sequel</code>, to insert the actual tuples:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="no">Registration</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span>
+  <span class="ss">:registration_id</span> <span class="o">=&gt;</span> <span class="n">registration_id</span><span class="p">,</span>
+  <span class="ss">:user_id</span> <span class="o">=&gt;</span> <span class="n">user_id</span><span class="p">,</span>
+  <span class="ss">:email_address</span> <span class="o">=&gt;</span> <span class="n">email_address</span><span class="p">,</span>
+  <span class="ss">:is_email_rejected</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span>
+  <span class="ss">:is_registered</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Once that’s done, our view database is populated.</p>
+
+<h2 id="requesting-data">Requesting Data</h2>
+
+<p>In a normal Rails application, the inserting of the tuple and querying of the database happens within a single request-response cycle. But within an event sourced architecture, it’s a little more complicated.</p>
+
+<p>The sequence within the application itself would look something like this:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Send a command to the registration service.</span>
+curl <span class="nt">-d</span> <span class="s1">'{"registration_id": "abc", "user_id": "123", "email_address": "john@example.com" }'</span> <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="nt">-X</span> POST http://localhost:3000/registrations
+
+<span class="c"># Query the registration for data.</span>
+curl <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> http://localhost:3000/registrations/abc
+</code></pre></div></div>
+
+<p>The first <code class="language-plaintext highlighter-rouge">curl</code> command sends a request to the registration service, which writes a command to our registration command stream:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">register</span> <span class="o">=</span> <span class="no">Register</span><span class="p">.</span><span class="nf">new</span>
+
+<span class="n">register</span><span class="p">.</span><span class="nf">registration_id</span> <span class="o">=</span> <span class="n">registration_id</span>
+<span class="n">register</span><span class="p">.</span><span class="nf">user_id</span> <span class="o">=</span> <span class="n">user_id</span>
+<span class="n">register</span><span class="p">.</span><span class="nf">email_address</span> <span class="o">=</span> <span class="n">email_address</span>
+
+<span class="n">stream_name</span> <span class="o">=</span> <span class="s2">"registration:command-</span><span class="si">#{</span><span class="n">registration_id</span><span class="si">}</span><span class="s2">"</span>
+
+<span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">claim</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>This would kick off the registration and email uniqueness components, which are waiting for new commands and events to process. But this is happening autonomously outside of the knowledge of the resource. The resource would simply respond with the following HTTP response:</p>
+
+<div class="language-http highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">202</span> <span class="ne">Accepted</span>
+<span class="na">Content-Type</span><span class="p">:</span> <span class="s">application/json</span>
+<span class="na">Location</span><span class="p">:</span> <span class="s">http://localhost:3000/registrations/abc</span>
+</code></pre></div></div>
+
+<p>An HTTP 202 Accepted response is generally expected when the request is being processed asynchronously. In addition, we’re returning a <code class="language-plaintext highlighter-rouge">Location</code> header so the application knows which resource to query for data.</p>
+
+<p>The second <code class="language-plaintext highlighter-rouge">curl</code> command queries the database:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span>
+  <span class="nv">"is_email_rejected"</span><span class="p">,</span>
+  <span class="nv">"is_registered"</span>
+<span class="k">FROM</span> <span class="nv">"registrations"</span>
+<span class="k">WHERE</span> <span class="nv">"registration_id"</span> <span class="o">=</span> <span class="p">:</span><span class="n">registration_id</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Because the view database is populated asynchronously, the first few queries to the resource may result in an HTTP 404 error. The application will need to continue querying the resource until it receives an HTTP 200 response, though perhaps with some sort of exponential backoff or rate limiting at play.</p>
+
+<p>Once the request is successful, the application knows whether the registration was successful or whether the email in question is already in use by someone else and can show the appropriate views to the user.</p>
+
+<p>Now we’re done.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Over the last few months, we’ve built an event sourced system that handles the single use case of user registrations, taking email uniqueness into account. We’ve protected against concurrency and made our components idempotent. We’ve seen the interaction between two components, and we’ve populated a view database, so that our application can query view data.</p>
+
+<p>I can’t answer the question of whether you should build something like this in your own application. That’s really dependent on your own use case and requirements. But the Ruby ecosystem is really hyper-focused on a single type of architecture called the monolith. I think it’s useful to know and understand different types of architectures, but resources on this subject, especially in Ruby, are few and far between.</p>
+
+<p>Still, I hope you’ve found some value in this sequence of essays.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/plug-and-chug">&laquo; The Plug and Chug Developer Mentality</a>
+
+
+|
+
+
+  <a class="next" href="/code-monkey">Not Just a Code Monkey &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>

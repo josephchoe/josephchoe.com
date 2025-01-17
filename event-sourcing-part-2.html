@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Event Sourcing, Part 2: Email Uniqueness | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/event-sourcing-part-2" />
+  <meta property="og:title" content="Event Sourcing, Part 2: Email Uniqueness | Joseph Choe" />
+  <meta property="og:description" content="  Note: Be sure to check out my 11+ hour video tutorial on event sourcing!" />
+  <meta property="og:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="Event Sourcing, Part 2: Email Uniqueness | Joseph Choe" />
+  <meta name="twitter:description" content="  Note: Be sure to check out my 11+ hour video tutorial on event sourcing!" />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="parent">
+    <a href="/essay" rel="tag">Essays</a>
+  </div>
+  <div class="title">
+    <h1>Event Sourcing, Part 2: Email Uniqueness</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Feb 26 2021</small>
+  </div>
+  <blockquote>
+  <p><strong>Note:</strong> Be sure to check out my 11+ hour video tutorial on <a href="/event-sourcing-tutorial">event sourcing</a>!</p>
+</blockquote>
+
+<p>Last month I discussed how to build a component that accepted <a href="/event-sourcing-part-1">user registrations</a>. We learned about the basic building blocks of an Eventide component, including entities, messages, projections, and handlers.</p>
+
+<p>But that component remained incomplete, as it didn’t take email uniqueness into account. We’ll be discussing all that and more today, with actual code examples.</p>
+
+<h2 id="disclaimer">Disclaimer</h2>
+
+<p>This essay is a tool for learning. It is always a bad idea to copy and paste code you found on the Internet without considering the implications each line of code would have on your own systems. You are the custodian of your codebase after all, which is why I continue to hammer that point home essay after essay.</p>
+
+<h2 id="email-uniqueness">Email Uniqueness</h2>
+
+<p>Previously, the registration component processed <code class="language-plaintext highlighter-rouge">Register</code> commands and wrote <code class="language-plaintext highlighter-rouge">Registered</code> events to the message store. You can see the tuples from a sample message store below.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-[ RECORD 1 ]---+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+global_position | 1
+position        | 0
+stream_name     | registration:command-abc
+type            | Register
+data            | {"time": "2000-01-01T00:00:00.001Z", "userId": "123", "emailAddress": "john@example.com", "registrationId": "abc"}
+-[ RECORD 2 ]---+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+global_position | 2
+position        | 0
+stream_name     | registration-abc
+type            | Registered
+data            | {"time": "2000-01-01T00:00:00.001Z", "userId": "123", "emailAddress": "john@example.com", "processedTime": "2021-02-15T11:02:18.314Z", "registrationId": "abc"}
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">registration-abc</code> stream holds all of the events for the entity Registration of ID <code class="language-plaintext highlighter-rouge">abc</code>. But there’s no way to know whether an email address was already reserved unless we have an entity tied to the email address that we can fetch.</p>
+
+<p>This means we need a separate entity and therefore a separate component that keeps track of email uniqueness.</p>
+
+<h2 id="the-user-email-address-entity">The User Email Address Entity</h2>
+
+<p>Like before, a good place to start developing a component is with the entity.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">UserEmailAddress</span>
+  <span class="kp">include</span> <span class="no">Schema</span><span class="o">::</span><span class="no">DataStructure</span>
+
+  <span class="n">attribute</span> <span class="ss">:encoded_email_address</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:email_address</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:user_id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:claimed_time</span><span class="p">,</span> <span class="no">Time</span>
+  <span class="n">attribute</span> <span class="ss">:sequence</span><span class="p">,</span> <span class="no">Integer</span>
+
+  <span class="k">def</span> <span class="nf">claimed?</span>
+    <span class="o">!</span><span class="n">claimed_time</span><span class="p">.</span><span class="nf">nil?</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">processed?</span><span class="p">(</span><span class="n">message_sequence</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">sequence</span><span class="p">.</span><span class="nf">nil?</span>
+
+    <span class="n">sequence</span> <span class="o">&gt;=</span> <span class="n">message_sequence</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">encoded_email_address</code> attribute here is much like the ID attribute in the previous component’s entity. We use it as the stream’s ID so that it is coupled to the email address and not some arbitrary UUID. The reason we use an encoded email address is because email addresses are case insensitive. For example, the email addresses <code class="language-plaintext highlighter-rouge">john@example.com</code> and <code class="language-plaintext highlighter-rouge">JOHN@example.com</code> are equivalent, so we need to make sure that we normalize the casing of any email addresses inputted into our system.</p>
+
+<p>Here’s how we might encode an email address:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">encode_email_address</span><span class="p">(</span><span class="n">email_address</span><span class="p">)</span>
+  <span class="n">downcased_email_address</span> <span class="o">=</span> <span class="n">email_address</span><span class="p">.</span><span class="nf">downcase</span>
+  <span class="no">Digest</span><span class="o">::</span><span class="no">SHA256</span><span class="p">.</span><span class="nf">hexdigest</span><span class="p">(</span><span class="n">downcased_email_address</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The reason I’ve included a SHA256 hashing function is a little bit outside the scope of this essay, but are security-related and have to do with not allowing user inputs to be used as stream IDs, outside of well-structured schemas like UUIDs. Suffice to say that you should always validate user inputs before allowing such data into your system.</p>
+
+<p>In any case, the entity is much the same as the last one, with a few additions. We have an <code class="language-plaintext highlighter-rouge">email_address</code> and an associated <code class="language-plaintext highlighter-rouge">user_id</code>. We have a <code class="language-plaintext highlighter-rouge">claimed_time</code> attribute and a <code class="language-plaintext highlighter-rouge">claimed?</code> predicate, which will be used to determine whether a user has already claimed a specified email address.</p>
+
+<p>But we also have a <code class="language-plaintext highlighter-rouge">sequence</code> attribute and a <code class="language-plaintext highlighter-rouge">processed?</code> predicate, which we haven’t seen before. We’ll go into more depth when we discuss the handler.</p>
+
+<h2 id="messages">Messages</h2>
+
+<p>Each component is designed with different considerations in mind and part of that is giving each thing their proper name.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Claim</span>
+  <span class="kp">include</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">Message</span>
+
+  <span class="n">attribute</span> <span class="ss">:claim_id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:encoded_email_address</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:email_address</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:user_id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:time</span><span class="p">,</span> <span class="no">String</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">ClaimRejected</span>
+  <span class="kp">include</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">Message</span>
+
+  <span class="n">attribute</span> <span class="ss">:claim_id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:encoded_email_address</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:email_address</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:user_id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:time</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:sequence</span><span class="p">,</span> <span class="no">Integer</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Claimed</span>
+  <span class="kp">include</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">Message</span>
+
+  <span class="n">attribute</span> <span class="ss">:claim_id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:encoded_email_address</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:email_address</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:user_id</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:time</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:processed_time</span><span class="p">,</span> <span class="no">String</span>
+  <span class="n">attribute</span> <span class="ss">:sequence</span><span class="p">,</span> <span class="no">Integer</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Unlike before, we have three messages, one command and two events. Each <code class="language-plaintext highlighter-rouge">Claim</code> command message, when processed, needs to fetch the current state of the entity. If the entity or email address is already claimed, then the current <code class="language-plaintext highlighter-rouge">Claim</code> is rejected, resulting in a <code class="language-plaintext highlighter-rouge">ClaimRejected</code> event being written. Otherwise, a <code class="language-plaintext highlighter-rouge">Claimed</code> event is written.</p>
+
+<p>Additionally, there is a <code class="language-plaintext highlighter-rouge">claim_id</code> attribute here, which we’ll discuss more down below.</p>
+
+<h2 id="projection">Projection</h2>
+
+<p>With two events to apply, we can see our projection for this component is just a little bit more complicated, though of course all we’re really doing is copying data from the event to the entity.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Projection</span>
+  <span class="kp">include</span> <span class="no">EntityProjection</span>
+  <span class="kp">include</span> <span class="no">Messages</span><span class="o">::</span><span class="no">Events</span>
+
+  <span class="n">entity_name</span> <span class="ss">:user_email_address</span>
+
+  <span class="n">apply</span> <span class="no">Claimed</span> <span class="k">do</span> <span class="o">|</span><span class="n">claimed</span><span class="o">|</span>
+    <span class="n">user_email_address</span><span class="p">.</span><span class="nf">encoded_email_address</span> <span class="o">=</span> <span class="n">claimed</span><span class="p">.</span><span class="nf">encoded_email_address</span>
+    <span class="n">user_email_address</span><span class="p">.</span><span class="nf">email_address</span> <span class="o">=</span> <span class="n">claimed</span><span class="p">.</span><span class="nf">email_address</span>
+    <span class="n">user_email_address</span><span class="p">.</span><span class="nf">user_id</span> <span class="o">=</span> <span class="n">claimed</span><span class="p">.</span><span class="nf">user_id</span>
+    <span class="n">user_email_address</span><span class="p">.</span><span class="nf">sequence</span> <span class="o">=</span> <span class="n">claimed</span><span class="p">.</span><span class="nf">sequence</span>
+    <span class="n">user_email_address</span><span class="p">.</span><span class="nf">claimed_time</span> <span class="o">=</span> <span class="no">Clock</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">claimed</span><span class="p">.</span><span class="nf">time</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">apply</span> <span class="no">ClaimRejected</span> <span class="k">do</span> <span class="o">|</span><span class="n">claim_rejected</span><span class="o">|</span>
+    <span class="n">user_email_address</span><span class="p">.</span><span class="nf">sequence</span> <span class="o">=</span> <span class="n">claim_rejected</span><span class="p">.</span><span class="nf">sequence</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Note that the entity’s sequence is being set with each event’s sequence.</p>
+
+<h2 id="handlers">Handler(s)</h2>
+
+<p>Let’s take a look at the handler.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Handlers</span>
+  <span class="k">class</span> <span class="nc">Commands</span>
+    <span class="kp">include</span> <span class="no">Log</span><span class="o">::</span><span class="no">Dependency</span>
+    <span class="kp">include</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">Handle</span>
+    <span class="kp">include</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">StreamName</span>
+    <span class="kp">include</span> <span class="no">Messages</span><span class="o">::</span><span class="no">Commands</span>
+    <span class="kp">include</span> <span class="no">Messages</span><span class="o">::</span><span class="no">Events</span>
+
+    <span class="n">dependency</span> <span class="ss">:write</span><span class="p">,</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">Postgres</span><span class="o">::</span><span class="no">Write</span>
+    <span class="n">dependency</span> <span class="ss">:clock</span><span class="p">,</span> <span class="no">Clock</span><span class="o">::</span><span class="no">UTC</span>
+    <span class="n">dependency</span> <span class="ss">:store</span><span class="p">,</span> <span class="no">Store</span>
+
+    <span class="k">def</span> <span class="nf">configure</span>
+      <span class="no">Messaging</span><span class="o">::</span><span class="no">Postgres</span><span class="o">::</span><span class="no">Write</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+      <span class="no">Clock</span><span class="o">::</span><span class="no">UTC</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+      <span class="no">Store</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">category</span> <span class="ss">:user_email_address</span>
+
+    <span class="n">handle</span> <span class="no">Claim</span> <span class="k">do</span> <span class="o">|</span><span class="n">claim</span><span class="o">|</span>
+      <span class="n">transaction_stream_name</span> <span class="o">=</span> <span class="n">stream_name</span><span class="p">(</span><span class="n">claim</span><span class="p">.</span><span class="nf">claim_id</span><span class="p">,</span> <span class="s1">'userEmailAddressTransaction'</span><span class="p">)</span>
+
+      <span class="n">claim</span> <span class="o">=</span> <span class="no">Claim</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">claim</span><span class="p">)</span>
+
+      <span class="no">Try</span><span class="o">.</span><span class="p">(</span><span class="no">MessageStore</span><span class="o">::</span><span class="no">ExpectedVersion</span><span class="o">::</span><span class="no">Error</span><span class="p">)</span> <span class="k">do</span>
+        <span class="n">write</span><span class="p">.</span><span class="nf">initial</span><span class="p">(</span><span class="n">claim</span><span class="p">,</span> <span class="n">transaction_stream_name</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>That doesn’t quite look like the handler from last time. That’s because there’s a crucial difference between the Registration component and this component.</p>
+
+<p>With the Registration component, there is the expectation that each Registration entity will have only one <code class="language-plaintext highlighter-rouge">Register</code> command and therefore one <code class="language-plaintext highlighter-rouge">Registered</code> event. With our idempotent protections in place, each subsequent <code class="language-plaintext highlighter-rouge">Register</code> command is ignored, with no event written in such a case.</p>
+
+<p>However, with our email uniqueness component, we must potentially process an infinite number of <code class="language-plaintext highlighter-rouge">Claim</code> commands through the lifetime of the email address, and each command must output either a <code class="language-plaintext highlighter-rouge">Claimed</code> event or a <code class="language-plaintext highlighter-rouge">ClaimRejected</code> event. And yet, we must still protect against duplicate command messages, otherwise our component will not be idempotent.</p>
+
+<p>To do this we use two different streams, a command stream and a transactional stream. The above handler is processing messages from the command stream, and to make sure duplicate command messages are not processed, we write to the transactional stream in a special way.</p>
+
+<p>We take the <code class="language-plaintext highlighter-rouge">claim_id</code> from the command message and write a copy of the <code class="language-plaintext highlighter-rouge">Claim</code> command to the <code class="language-plaintext highlighter-rouge">userEmailAddressTransaction-{claim_id}</code> stream using the <code class="language-plaintext highlighter-rouge">write.initial</code> method. This method is a convenience method that is equivalent to the following:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">claim</span><span class="p">,</span> <span class="n">transaction_stream_name</span><span class="p">,</span> <span class="ss">expected_version: </span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>This makes sure that any message we write to the specified stream is on an empty stream, i.e. a stream with zero messages. If the writer attempts to write a message to a non-empty stream, the <code class="language-plaintext highlighter-rouge">Try</code> module will suppress the <code class="language-plaintext highlighter-rouge">MessageStore::ExpectedVersion::Error</code> exception that was raised, allowing the component to process the next message in the category.</p>
+
+<p>Once the <code class="language-plaintext highlighter-rouge">Claim</code> command is written to the transactional stream, we have a second handler that will read <em>those</em> messages and write events to the component’s event stream.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Handlers</span>
+  <span class="k">class</span> <span class="nc">Commands</span>
+    <span class="k">class</span> <span class="nc">Transactions</span>
+      <span class="kp">include</span> <span class="no">Log</span><span class="o">::</span><span class="no">Dependency</span>
+      <span class="kp">include</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">Handle</span>
+      <span class="kp">include</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">StreamName</span>
+      <span class="kp">include</span> <span class="no">Messages</span><span class="o">::</span><span class="no">Commands</span>
+      <span class="kp">include</span> <span class="no">Messages</span><span class="o">::</span><span class="no">Events</span>
+
+      <span class="n">dependency</span> <span class="ss">:write</span><span class="p">,</span> <span class="no">Messaging</span><span class="o">::</span><span class="no">Postgres</span><span class="o">::</span><span class="no">Write</span>
+      <span class="n">dependency</span> <span class="ss">:clock</span><span class="p">,</span> <span class="no">Clock</span><span class="o">::</span><span class="no">UTC</span>
+      <span class="n">dependency</span> <span class="ss">:store</span><span class="p">,</span> <span class="no">Store</span>
+
+      <span class="k">def</span> <span class="nf">configure</span>
+        <span class="no">Messaging</span><span class="o">::</span><span class="no">Postgres</span><span class="o">::</span><span class="no">Write</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+        <span class="no">Clock</span><span class="o">::</span><span class="no">UTC</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+        <span class="no">Store</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="n">category</span> <span class="ss">:user_email_address</span>
+
+      <span class="n">handle</span> <span class="no">Claim</span> <span class="k">do</span> <span class="o">|</span><span class="n">claim</span><span class="o">|</span>
+        <span class="n">encoded_email_address</span> <span class="o">=</span> <span class="n">claim</span><span class="p">.</span><span class="nf">encoded_email_address</span>
+
+        <span class="n">user_email_address</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">store</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">encoded_email_address</span><span class="p">,</span> <span class="ss">include: :version</span><span class="p">)</span>
+
+        <span class="n">sequence</span> <span class="o">=</span> <span class="n">claim</span><span class="p">.</span><span class="nf">metadata</span><span class="p">.</span><span class="nf">global_position</span>
+
+        <span class="k">if</span> <span class="n">user_email_address</span><span class="p">.</span><span class="nf">processed?</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+          <span class="n">logger</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="ss">tag: :ignored</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"Command ignored (Command: </span><span class="si">#{</span><span class="n">claim</span><span class="p">.</span><span class="nf">message_type</span><span class="si">}</span><span class="s2">, User Email Address: </span><span class="si">#{</span><span class="n">user_email_address</span><span class="p">.</span><span class="nf">email_address</span><span class="si">}</span><span class="s2">, User Email Address Sequence: </span><span class="si">#{</span><span class="n">user_email_address</span><span class="p">.</span><span class="nf">sequence</span><span class="si">}</span><span class="s2">, Claim Sequence: </span><span class="si">#{</span><span class="n">sequence</span><span class="si">}</span><span class="s2">)"</span> <span class="p">}</span>
+          <span class="k">return</span>
+        <span class="k">end</span>
+
+        <span class="n">time</span> <span class="o">=</span> <span class="n">clock</span><span class="p">.</span><span class="nf">iso8601</span>
+
+        <span class="n">stream_name</span> <span class="o">=</span> <span class="n">stream_name</span><span class="p">(</span><span class="n">encoded_email_address</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">user_email_address</span><span class="p">.</span><span class="nf">claimed?</span>
+          <span class="n">claim_rejected</span> <span class="o">=</span> <span class="no">ClaimRejected</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">claim</span><span class="p">)</span>
+          <span class="n">claim_rejected</span><span class="p">.</span><span class="nf">time</span> <span class="o">=</span> <span class="n">time</span>
+          <span class="n">claim_rejected</span><span class="p">.</span><span class="nf">sequence</span> <span class="o">=</span> <span class="n">sequence</span>
+
+          <span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">claim_rejected</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">,</span> <span class="ss">expected_version: </span><span class="n">version</span><span class="p">)</span>
+
+          <span class="k">return</span>
+        <span class="k">end</span>
+
+        <span class="n">claimed</span> <span class="o">=</span> <span class="no">Claimed</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">claim</span><span class="p">)</span>
+        <span class="n">claimed</span><span class="p">.</span><span class="nf">processed_time</span> <span class="o">=</span> <span class="n">time</span>
+        <span class="n">claimed</span><span class="p">.</span><span class="nf">sequence</span> <span class="o">=</span> <span class="n">sequence</span>
+
+        <span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">claimed</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">,</span> <span class="ss">expected_version: </span><span class="n">version</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>This looks a lot more like the Registration component’s handler. First, we use the entity’s <code class="language-plaintext highlighter-rouge">processed?</code> predicate to make sure we didn’t already process the message. As a reminder, here’s the <code class="language-plaintext highlighter-rouge">processed?</code> predicate.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">UserEmailAddress</span>
+  <span class="kp">include</span> <span class="no">Schema</span><span class="o">::</span><span class="no">DataStructure</span>
+
+  <span class="c1">## ...</span>
+  <span class="n">attribute</span> <span class="ss">:sequence</span><span class="p">,</span> <span class="no">Integer</span>
+
+  <span class="c1">## ...</span>
+
+  <span class="k">def</span> <span class="nf">processed?</span><span class="p">(</span><span class="n">message_sequence</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kp">false</span> <span class="k">if</span> <span class="n">sequence</span><span class="p">.</span><span class="nf">nil?</span>
+
+    <span class="n">sequence</span> <span class="o">&gt;=</span> <span class="n">message_sequence</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>We’ve taken the message’s <code class="language-plaintext highlighter-rouge">sequence</code>, which is the command message’s global position within the message store, and compared it to the entity’s <code class="language-plaintext highlighter-rouge">sequence</code>. If a message was already processed, then the entity’s <code class="language-plaintext highlighter-rouge">sequence</code> will be higher than the message’s <code class="language-plaintext highlighter-rouge">sequence</code>. If the entity’s <code class="language-plaintext highlighter-rouge">sequence</code> is <code class="language-plaintext highlighter-rouge">nil</code>, then it hasn’t processed any messages from the transactional stream.</p>
+
+<p>We know this because when we fetch the entity from the <code class="language-plaintext highlighter-rouge">store</code> object, we’re applying the following events:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Projection</span>
+  <span class="c1">## ...</span>
+
+  <span class="n">apply</span> <span class="no">Claimed</span> <span class="k">do</span> <span class="o">|</span><span class="n">claimed</span><span class="o">|</span>
+    <span class="c1">## ...</span>
+    <span class="n">user_email_address</span><span class="p">.</span><span class="nf">sequence</span> <span class="o">=</span> <span class="n">claimed</span><span class="p">.</span><span class="nf">sequence</span>
+    <span class="c1">## ...</span>
+  <span class="k">end</span>
+
+  <span class="n">apply</span> <span class="no">ClaimRejected</span> <span class="k">do</span> <span class="o">|</span><span class="n">claim_rejected</span><span class="o">|</span>
+    <span class="n">user_email_address</span><span class="p">.</span><span class="nf">sequence</span> <span class="o">=</span> <span class="n">claim_rejected</span><span class="p">.</span><span class="nf">sequence</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Each event has a <code class="language-plaintext highlighter-rouge">sequence</code> that was taken from the corresponding command’s global position.</p>
+
+<p>If the predicate <code class="language-plaintext highlighter-rouge">processed?</code> returns <code class="language-plaintext highlighter-rouge">true</code>, we know we have already processed that message and can safely ignore it, thus ensuring idempotence.</p>
+
+<h2 id="decisions-decisions">Decisions, Decisions</h2>
+
+<p>Next in the handler is an important bit of business logic.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nn">Handlers</span>
+  <span class="k">class</span> <span class="nc">Commands</span>
+    <span class="k">class</span> <span class="nc">Transactions</span>
+      <span class="c1">## ...</span>
+
+      <span class="n">handle</span> <span class="no">Claim</span> <span class="k">do</span> <span class="o">|</span><span class="n">claim</span><span class="o">|</span>
+        <span class="n">encoded_email_address</span> <span class="o">=</span> <span class="n">claim</span><span class="p">.</span><span class="nf">encoded_email_address</span>
+
+        <span class="n">user_email_address</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">store</span><span class="p">.</span><span class="nf">fetch</span><span class="p">(</span><span class="n">encoded_email_address</span><span class="p">,</span> <span class="ss">include: :version</span><span class="p">)</span>
+
+        <span class="c1">## ...</span>
+
+        <span class="n">time</span> <span class="o">=</span> <span class="n">clock</span><span class="p">.</span><span class="nf">iso8601</span>
+
+        <span class="n">stream_name</span> <span class="o">=</span> <span class="n">stream_name</span><span class="p">(</span><span class="n">encoded_email_address</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">user_email_address</span><span class="p">.</span><span class="nf">claimed?</span>
+          <span class="n">claim_rejected</span> <span class="o">=</span> <span class="no">ClaimRejected</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">claim</span><span class="p">)</span>
+          <span class="n">claim_rejected</span><span class="p">.</span><span class="nf">time</span> <span class="o">=</span> <span class="n">time</span>
+          <span class="n">claim_rejected</span><span class="p">.</span><span class="nf">sequence</span> <span class="o">=</span> <span class="n">sequence</span>
+
+          <span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">claim_rejected</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">,</span> <span class="ss">expected_version: </span><span class="n">version</span><span class="p">)</span>
+
+          <span class="k">return</span>
+        <span class="k">end</span>
+
+        <span class="n">claimed</span> <span class="o">=</span> <span class="no">Claimed</span><span class="p">.</span><span class="nf">follow</span><span class="p">(</span><span class="n">claim</span><span class="p">)</span>
+        <span class="n">claimed</span><span class="p">.</span><span class="nf">processed_time</span> <span class="o">=</span> <span class="n">time</span>
+        <span class="n">claimed</span><span class="p">.</span><span class="nf">sequence</span> <span class="o">=</span> <span class="n">sequence</span>
+
+        <span class="n">write</span><span class="o">.</span><span class="p">(</span><span class="n">claimed</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">,</span> <span class="ss">expected_version: </span><span class="n">version</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Once we’ve determined whether a message was already processed or not, we need to check whether the specified email address was claimed or not. This is where the <code class="language-plaintext highlighter-rouge">claimed?</code> predicate comes in. As I mentioned before, depending on the results of that predicate, we write different events, either <code class="language-plaintext highlighter-rouge">Claimed</code> or <code class="language-plaintext highlighter-rouge">ClaimRejected</code>.</p>
+
+<p>We now have a reliable way to ensure email uniqueness.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>By this point, we have written two separate components, one to accept user registrations and another to ensure email uniqueness. We’ve made our components idempotent with two separate patterns and protected against concurrent writes.</p>
+
+<p>However, we’re <em>still</em> not done. The Registration component itself doesn’t take email uniqueness into account, as that’s taken care of by the component we just wrote. What we need to do is to update the Registration component so that it can send and receive messages to and from the User Email Address component.</p>
+
+<p>Which is what we’ll talk about next time.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/snooping">&laquo; Be a Snoop</a>
+
+
+|
+
+
+  <a class="next" href="/rss">Really Simple Syndication &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>

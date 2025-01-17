@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Personal Tech Stack | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/tech-stack" />
+  <meta property="og:title" content="Personal Tech Stack | Joseph Choe" />
+  <meta property="og:description" content="Most of the time when I work on a project, someone has already decided what technologies to use. They made choices I would not have necessarily made. I wouldn’t say they were wrong choices, only th..." />
+  <meta property="og:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="Personal Tech Stack | Joseph Choe" />
+  <meta name="twitter:description" content="Most of the time when I work on a project, someone has already decided what technologies to use. They made choices I would not have necessarily made. I wouldn’t say they were wrong choices, only th..." />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="parent">
+    <a href="/essay" rel="tag">Essays</a>
+  </div>
+  <div class="title">
+    <h1>Personal Tech Stack</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Jun 18 2021</small>
+  </div>
+  <p>Most of the time when I work on a project, someone has already decided what technologies to use. They made choices I would not have necessarily made. I wouldn’t say they were wrong choices, only that my preferences lie elsewhere.</p>
+
+<p>If I were to start a project from scratch, here’s what I’d use and why.</p>
+
+<h2 id="frontend">Frontend</h2>
+
+<p>Most of the time, I write in HTML and JavaScript without working with a JavaScript framework. I used Ember and Knockout in the past for work, but I quickly disliked using those libraries rather than just plain vanilla JavaScript.</p>
+
+<p>Still, I’ve grown to like Vue.js. I enjoy using Vue with JSX and <code class="language-plaintext highlighter-rouge">vue-router-dom</code> as it hits all of my sensibilities. However, I won’t always try to develop a single page application right out of the gate.</p>
+
+<p>What I’ve found though is that I don’t really use many of the tools most JavaScript developers use. Instead, I opt for <code class="language-plaintext highlighter-rouge">bash</code> scripts to help with things like building and deploying the application.</p>
+
+<p>For example:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Instead of running this:</span>
+yarn <span class="nb">test</span>
+
+<span class="c"># I'll run this:</span>
+./test.sh
+</code></pre></div></div>
+
+<p>When working with multiple projects going up and down the stack, having a consistent API between these projects can be very helpful. Every project will have similar scripts: <code class="language-plaintext highlighter-rouge">start.sh</code>, <code class="language-plaintext highlighter-rouge">test.sh</code>, et cetera. Because of this, I don’t need to context switch and remember that I’m in a Vue.js application, so I need to run <code class="language-plaintext highlighter-rouge">yarn test</code> here instead. Each script will contain the necessary commands, and I can execute them without giving it much thought.</p>
+
+<h3 id="mobile-development">Mobile Development</h3>
+
+<p>I don’t really know much about mobile development, which is a failing I plan to rectify some time in the future. However, I would probably use Swift and Kotlin, rather than something like React Native, mostly because I think working with the native languages is far more useful in the long run.</p>
+
+<h2 id="backend">Backend</h2>
+
+<p>My language of choice is Ruby, mostly because I enjoy the clean syntax. The creator of the language, Yukihiro Matsumoto, said that when he created the language he wanted to “maximize developer happiness”, which I think he was pretty successful at. I rarely have to think about whether this or that syntax is correct.</p>
+
+<p>When you talk about Ruby, you inevitably talk about Rails, but believe it or not, I don’t use Rails. It’s a fine framework for what it does, but it’s also kind of inflexible. Instead, if I’m writing web applications, I’ll use Rack, which almost every Ruby web framework is based on already. This has the added benefit that most middleware written for Rails will work for Rack anyway with little to no effort. This also works in reverse: middleware written for Rack will be usable in Rails.</p>
+
+<p>I also have a Rack router I built that is based somewhat on the API used in Roda. I just really like the syntax, I suppose. The only difference is that instead of Strings, I return Rack responses.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">route</span> <span class="k">do</span> <span class="o">|</span><span class="n">r</span><span class="o">|</span>
+  <span class="n">r</span><span class="p">.</span><span class="nf">is</span> <span class="s2">"foo"</span> <span class="k">do</span>
+    <span class="n">r</span><span class="p">.</span><span class="nf">get</span> <span class="k">do</span>
+      <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span> <span class="s2">"Content-Type"</span> <span class="o">=&gt;</span> <span class="s2">"text/html"</span> <span class="p">},</span> <span class="p">[</span><span class="s2">"Hello, world!"</span><span class="p">]]</span>
+    <span class="k">end</span>
+
+    <span class="n">r</span><span class="p">.</span><span class="nf">post</span> <span class="k">do</span>
+      <span class="c1"># ...</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="database">Database</h3>
+
+<p>Speaking of databases, for the most part I use PostgreSQL, but I never use any ORM like ActiveRecord or Sequel. Instead, I write queries in pure SQL that are then  executed using the <code class="language-plaintext highlighter-rouge">pg</code> gem.</p>
+
+<p>I haven’t really found a need for other stores like Redis or <code class="language-plaintext highlighter-rouge">memcached</code> or message brokers like RabbitMQ. And like <a href="/plug-and-chug">I’ve mentioned before</a>, I don’t like to add technologies to my stack without good reason.</p>
+
+<p>But it depends on the needs of the application, I suppose. For example, I’m sure I would use a graph database like <code class="language-plaintext highlighter-rouge">neo4j</code> if I was building a social networking application, because querying those kinds of relationships in SQL is much too painful. The needs of the application dictate the technology used.</p>
+
+<h2 id="deployment">Deployment</h2>
+
+<p>I feel like deployment is one of those things that isn’t talked about a lot, though I’m not sure why. I kind of wish there was a standardized way to deploy applications, because I had to muddle through it for so long.</p>
+
+<p>For frontend applications, I don’t do anything more complicated than deploy my code to a static bucket somewhere. My only concerns here are whether the hosting platform can handle the traffic I plan to aim at it.</p>
+
+<p>For server side applications and services, I’ll use Packer to create golden images and deploy those images with Terraform. I utilize auto-scaling groups for any of my scaling needs, rather than rely on something like Kubernetes.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Put all together, my ideal tech stack is:</p>
+
+<ul>
+  <li>Vanilla HTML and JavaScript, or Vue.js</li>
+  <li>Ruby</li>
+  <li>Rack</li>
+  <li>PostgreSQL</li>
+  <li>Packer</li>
+  <li>Terraform</li>
+</ul>
+
+<p>I’m aware that it’s fairly unorthodox.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/full-capacity">&laquo; Full Capacity</a>
+
+
+|
+
+
+  <a class="next" href="/wip-june-2021">Work in Progress: June 2021 &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>

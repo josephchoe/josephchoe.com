@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>WireGuard on OpenBSD | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/wireguard" />
+  <meta property="og:title" content="WireGuard on OpenBSD | Joseph Choe" />
+  <meta property="og:description" content="I’ll be traveling a bit next year, and when I do I’ll want to have access to my homelab and all the services therein." />
+  <meta property="og:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="WireGuard on OpenBSD | Joseph Choe" />
+  <meta name="twitter:description" content="I’ll be traveling a bit next year, and when I do I’ll want to have access to my homelab and all the services therein." />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="parent">
+    <a href="/essay" rel="tag">Essays</a>
+  </div>
+  <div class="title">
+    <h1>WireGuard on OpenBSD</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Dec 3 2021</small>
+  </div>
+  <p>I’ll be traveling a bit next year, and when I do I’ll want to have access to my <a href="/infrastructure">homelab</a> and all the services therein.</p>
+
+<p>This is where a virtual private network or VPN would certainly come in handy, an encrypted tunnel that would allow me to access my private network from public networks.</p>
+
+<p>So I decided to take a look at <a href="https://wireguard.com">WireGuard</a>, which conveniently for me is available on OpenBSD as <a href="https://man.openbsd.org/wg.4"><code class="language-plaintext highlighter-rouge">wg(4)</code></a>.</p>
+
+<h2 id="server-configuration">Server Configuration</h2>
+
+<p>I first provisioned a <a href="/openbsd-proxmox">new virtual machine</a> with OpenBSD 7.0 installed.</p>
+
+<p>Then, I enabled IP forwarding:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>doas sysctl net.inet.ip.forwarding<span class="o">=</span>1
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'net.inet.ip.forwarding=1'</span> | doas <span class="nb">tee</span> <span class="nt">-a</span> /etc/sysctl.conf
+</code></pre></div></div>
+
+<p>After that, I downloaded the WireGuard tools:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>doas pkg_add wireguard-tools
+</code></pre></div></div>
+
+<p>I use these only to extract the public keys from the private keys, but I could probably make do without them. However, I am at times inexplicably, incredibly lazy.</p>
+
+<p>In any case, let’s generate the server keys:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Generate server private key</span>
+<span class="nv">$ </span>openssl rand <span class="nt">-base64</span> 32 <span class="o">&gt;</span> server_secret.key
+<span class="c"># Extract server public key</span>
+<span class="nv">$ </span>wg pubkey &lt; server_secret.key <span class="o">&gt;</span> server_public.key
+</code></pre></div></div>
+
+<p>Next, I need to configure a WireGuard interface by creating a new file called <code class="language-plaintext highlighter-rouge">/etc/hostname.wg0</code> on the server:</p>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">wgkey</span> $<span class="n">SERVER_PRIVATE_KEY</span>
+<span class="n">wgpeer</span> $<span class="n">PEER_PUBLIC_KEY</span> <span class="n">wgaip</span> <span class="m">10</span>.<span class="m">11</span>.<span class="m">11</span>.<span class="m">10</span>/<span class="m">32</span>
+<span class="n">wgport</span> <span class="m">51820</span>
+<span class="n">inet</span> <span class="m">10</span>.<span class="m">11</span>.<span class="m">11</span>.<span class="m">1</span>/<span class="m">24</span>
+<span class="n">up</span>
+</code></pre></div></div>
+<p>I’ve decided upon <code class="language-plaintext highlighter-rouge">10.11.11.1</code> for the server’s local IP and <code class="language-plaintext highlighter-rouge">10.11.11.10</code> for the peer or client’s local IP.</p>
+
+<p>I need to update the server’s firewall via the <code class="language-plaintext highlighter-rouge">/etc/pf.conf</code> file:</p>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">set</span> <span class="n">skip</span> <span class="n">on</span> <span class="n">wg0</span>
+<span class="n">pass</span> <span class="n">in</span> <span class="n">inet</span> <span class="n">proto</span> <span class="n">udp</span> <span class="n">from</span> <span class="n">any</span> <span class="n">to</span> <span class="n">any</span> <span class="n">port</span> <span class="m">51820</span> <span class="n">keep</span> <span class="n">state</span>
+<span class="n">pass</span> <span class="n">out</span> <span class="n">on</span> <span class="n">egress</span> <span class="n">inet</span> <span class="n">from</span> <span class="n">wg0</span>:<span class="n">network</span> <span class="n">to</span> <span class="n">any</span> <span class="n">nat</span>-<span class="n">to</span> (<span class="n">egress</span>)
+</code></pre></div></div>
+
+<p>These rules allow traffic through the encrypted UDP tunnel over the network interface <code class="language-plaintext highlighter-rouge">vio0</code>.</p>
+
+<p>Can’t forget to run <code class="language-plaintext highlighter-rouge">doas pfctl -f /etc/pf.conf</code>!</p>
+
+<p>I will need to run <code class="language-plaintext highlighter-rouge">doas sh /etc/netstart wg0</code> to start the interface. We can see that the interface is running by querying <code class="language-plaintext highlighter-rouge">ifconfig</code>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>doas ifconfig wg0
+wg0: <span class="nv">flags</span><span class="o">=</span>80c3&lt;UP,BROADCAST,RUNNING,NOARP,MULTICAST&gt; mtu 1420
+        index 5 priority 0 llprio 3
+        wgport 51820
+        wgpubkey <span class="nv">$SERVER_PUBLIC_KEY</span>
+        wgpeer <span class="nv">$PEER_PUBLIC_KEY</span>
+                tx: 0, rx: 0
+                wgaip 10.11.11.10/32
+        <span class="nb">groups</span>: wg
+        inet 10.11.11.1 netmask 0xffffff00 broadcast 10.11.11.255
+</code></pre></div></div>
+
+<p>It’s also important that I configure the network router to port forward the UDP port <code class="language-plaintext highlighter-rouge">51820</code> to the virtual machine. However, this is outside the scope of this essay, though it’s fairly simple.</p>
+
+<p>We can test this works by using <a href="https://man.openbsd.org/nc.1"><code class="language-plaintext highlighter-rouge">nc(1)</code></a>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nc <span class="nt">-uvz</span> <span class="nv">$SERVER_PUBLIC_IP</span> 51820
+Connection to <span class="nv">$SERVER_PUBLIC_IP</span> port 51820 <span class="o">[</span>udp/<span class="k">*</span><span class="o">]</span> succeeded!
+</code></pre></div></div>
+
+<p>Looking good so far!</p>
+
+<h2 id="macos-client-configuration">MacOS Client Configuration</h2>
+
+<p>While I do have a new <a href="/framework">Framework laptop</a>, I still use my old MacBook Pro from time to time. I also need to make sure that my wife can connect to the encrypted tunnel, so this section could just as well be titled “Android Client Configuration”.</p>
+
+<p>I’ll need to download the WireGuard client applicable to whatever platform this is, whether MacOS or Android. Once I’ve done that, I can generate the client’s keys:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Generate peer private key</span>
+<span class="nv">$ </span>openssl rand <span class="nt">-base64</span> 32 <span class="o">&gt;</span> peer1_secret.key
+<span class="c"># Extract peer public key</span>
+<span class="nv">$ </span>wg pubkey &lt; peer1_secret.key <span class="o">&gt;</span> peer1_public.key
+</code></pre></div></div>
+
+<p>Then, I click <code class="language-plaintext highlighter-rouge">Add Empty Tunnel</code> and paste the following:</p>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[<span class="n">Interface</span>]
+<span class="n">PrivateKey</span> = $<span class="n">PEER_PRIVATE_KEY</span>
+<span class="n">ListenPort</span> = <span class="m">51820</span>
+<span class="n">Address</span> = <span class="m">10</span>.<span class="m">11</span>.<span class="m">11</span>.<span class="m">10</span>/<span class="m">32</span>
+
+[<span class="n">Peer</span>]
+<span class="n">PublicKey</span> = $<span class="n">SERVER_PUBLIC_KEY</span>
+<span class="n">AllowedIPs</span> = <span class="m">0</span>.<span class="m">0</span>.<span class="m">0</span>.<span class="m">0</span>/<span class="m">0</span>
+<span class="n">Endpoint</span> = $<span class="n">SERVER_PUBLIC_IP</span>:<span class="m">51820</span>
+</code></pre></div></div>
+
+<p>Upon pressing <code class="language-plaintext highlighter-rouge">Activate</code>, the computer or smartphone begins to route traffic through the encrypted tunnel.</p>
+
+<h2 id="framework-laptop-configuration">Framework Laptop Configuration</h2>
+
+<p>Ostensibly, my wife and I need to access the WireGuard encrypted tunnel at the same time. Since my Framework laptop is running OpenBSD, the process to configure WireGuard is a bit different.</p>
+
+<p>To start with, I’ll need to generate a new set of keys and add an additional peer to the server’s <code class="language-plaintext highlighter-rouge">/etc/hostname.wg0</code> file:</p>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">wgpeer</span> $<span class="n">PEER2_PUBLIC_KEY</span> <span class="n">wgaip</span> <span class="m">10</span>.<span class="m">11</span>.<span class="m">11</span>.<span class="m">11</span>/<span class="m">32</span>
+</code></pre></div></div>
+
+<p>I’ve selected <code class="language-plaintext highlighter-rouge">10.11.11.11</code> for the second peer’s local IP. Once that file is updated, I can run <code class="language-plaintext highlighter-rouge">doas sh /etc/netstart wg0</code> once more to catch the new changes on the interface.</p>
+
+<p>In order to route traffic from the WireGuard tunnel to the network device on the Framework laptop, we need to grab the laptop’s default gateway:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>route show
+Routing tables
+
+Internet:
+Destination        Gateway            Flags   Refs      Use   Mtu  Prio Iface
+default            192.168.0.1        UGS       11       24     -    12 iwx0
+...
+</code></pre></div></div>
+
+<p>Then, I’ll create a new <code class="language-plaintext highlighter-rouge">/etc/hostname.wg0</code> file on the Framework laptop:</p>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">wgkey</span> $<span class="n">PEER2_PRIVATE_KEY</span>
+<span class="n">wgpeer</span> $<span class="n">SERVER_PUBLIC_KEY</span> <span class="n">wgendpoint</span> $<span class="n">SERVER_PUBLIC_IP</span> <span class="m">51820</span> <span class="n">wgaip</span> <span class="m">0</span>.<span class="m">0</span>.<span class="m">0</span>.<span class="m">0</span>/<span class="m">0</span>
+<span class="n">wgport</span> <span class="m">51820</span>
+<span class="n">inet</span> <span class="m">10</span>.<span class="m">11</span>.<span class="m">11</span>.<span class="m">11</span>/<span class="m">24</span>
+!<span class="n">route</span> <span class="n">add</span> -<span class="n">priority</span> <span class="m">2</span> $<span class="n">SERVER_PUBLIC_IP</span> $<span class="n">LOCAL_GATEWAY</span>
+!<span class="n">route</span> <span class="n">add</span> -<span class="n">priority</span> <span class="m">7</span> <span class="n">default</span> <span class="m">10</span>.<span class="m">11</span>.<span class="m">11</span>.<span class="m">1</span>
+</code></pre></div></div>
+
+<p>Note the difference between this and the server’s <code class="language-plaintext highlighter-rouge">wg0</code> interface: we’ve added two routing rules that will route traffic from the local default gateway and through the WireGuard tunnel.</p>
+
+<p>Finally, we can run <code class="language-plaintext highlighter-rouge">doas sh /etc/netstart wg0</code> to start the new interface. The traffic on the Framework laptop should be immediately routed through the encrypted tunnel. We can tell via the <code class="language-plaintext highlighter-rouge">icmp</code> protocol and pinging the server’s local IP from the laptop:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>ping <span class="nt">-c</span> 2 10.11.11.1
+PING 10.11.11.1 <span class="o">(</span>10.11.11.1<span class="o">)</span>: 56 data bytes
+64 bytes from 10.11.11.1: <span class="nv">icmp_seq</span><span class="o">=</span>0 <span class="nv">ttl</span><span class="o">=</span>255 <span class="nb">time</span><span class="o">=</span>307.325 ms
+64 bytes from 10.11.11.1: <span class="nv">icmp_seq</span><span class="o">=</span>1 <span class="nv">ttl</span><span class="o">=</span>255 <span class="nb">time</span><span class="o">=</span>315.128 ms
+
+<span class="nt">---</span> 10.11.11.1 ping statistics <span class="nt">---</span>
+2 packets transmitted, 2 packets received, 0.0% packet loss
+round-trip min/avg/max/std-dev <span class="o">=</span> 307.325/311.226/315.128/3.902 ms
+</code></pre></div></div>
+
+<p>Yay!</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>WireGuard was actually fairly simple to setup. Creating new interfaces, for example, used an easily readable syntax that was easy to wrap my head around.</p>
+
+<p>I’m actually pretty pleased with how this all turned out, and I’m excited by the new things I’m learning with OpenBSD as well.</p>
+
+<p>Having access to my homelab while I’m traveling will be pretty nice, too.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/compiling-ruby-from-source">&laquo; Compiling Ruby from Source</a>
+
+
+|
+
+
+  <a class="next" href="/loyalty">Company Loyalty &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>

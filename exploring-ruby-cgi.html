@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Exploring Ruby CGI | Joseph Choe</title>
+    <meta name="description" content="I think about software development, writing, and many other things." />
+
+        <link rel="alternate" type="application/atom+xml" title="Joseph Choe" href="/feed.xml">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+
+    <meta name="author" content="Joseph Choe" />
+
+  <meta property="og:url" content="https://josephchoe.com/exploring-ruby-cgi" />
+  <meta property="og:title" content="Exploring Ruby CGI | Joseph Choe" />
+  <meta property="og:description" content="Lately, I’ve been thinking about how Ruby web applications are deployed." />
+  <meta property="og:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  <meta property="og:type" content="article" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@josephchoe" />
+  <meta name="twitter:creator" content="@josephchoe" />
+  <meta name="twitter:title" content="Exploring Ruby CGI | Joseph Choe" />
+  <meta name="twitter:description" content="Lately, I’ve been thinking about how Ruby web applications are deployed." />
+
+  <meta name="twitter:image" content="https://josephchoe.com/assets/images/zurrey.jpg" />
+
+
+  </head>
+
+  <body>
+    <header>
+      <h1><a href="/" title="Joseph Choe">Joseph Choe</a></h1>
+    </header>
+
+    <main id="content">
+      
+
+
+<article>
+  <div class="title">
+    <h1>Exploring Ruby CGI</h1>
+  </div>
+  <div class="post-date">
+    <small>Fri Nov 12 2021</small>
+  </div>
+  <p>Lately, I’ve been thinking about how Ruby web applications are deployed.</p>
+
+<p>In most applications, you have a web server like <code class="language-plaintext highlighter-rouge">nginx</code> serving static pages. These web servers can also route traffic to application servers like <code class="language-plaintext highlighter-rouge">puma</code>, which then allows for the use of the <a href="/rack-the-best-ruby-web-framework">Rack interface</a>.</p>
+
+<p>However, this means you have both the web server and the application server running constantly. Which might be what you want, depending on your use case, but also maybe not.</p>
+
+<p>Perhaps I’m showing my age, but when I was a young kid I would write the odd Perl script for small bits of functionality like web counters or guestbooks. This was done through the <strong>common gateway interface</strong> or CGI.</p>
+
+<p>We can also serve Ruby scripts through this interface, like so:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># hello.cgi</span>
+
+<span class="c1">#!/usr/bin/ruby</span>
+
+<span class="nb">puts</span> <span class="s2">"Status: 200"</span>
+<span class="nb">puts</span> <span class="s2">"Content-Type: text/plain"</span>
+<span class="nb">puts</span>
+<span class="nb">puts</span> <span class="s2">"Hello, world!"</span>
+</code></pre></div></div>
+
+<p>Via CGI, we’re printing output to the user on the browser by printing messages to <code class="language-plaintext highlighter-rouge">$stdout</code>. You can see familiar elements like the HTTP status code, a header, and the body of the response separated from the headers by a newline.</p>
+
+<p>If you run this script, it will simply print to <code class="language-plaintext highlighter-rouge">$stdout</code>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>./hello.cgi
+Status: 200
+Content-Type: text/plain
+
+Hello, world!
+</code></pre></div></div>
+
+<p>And when we serve this script from our web server:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>curl <span class="nt">-i</span> http://localhost:9292/hello.cgi
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Server: WEBrick/1.7.0 <span class="o">(</span>Ruby/3.0.2/2021-07-07<span class="o">)</span>
+Date: Sun, 07 Nov 2021 08:44:22 GMT
+Content-Length: 12
+Connection: Keep-Alive
+
+Hello, world!
+</code></pre></div></div>
+
+<p>Fairly straightforward!</p>
+
+<p>We can also use Rack’s CGI handler if we want to abstract away some of the request handling:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># hello-rack.cgi</span>
+
+<span class="c1">#!/usr/bin/ruby</span>
+
+<span class="nb">require</span> <span class="s1">'rack'</span>
+
+<span class="k">class</span> <span class="nc">Application</span>
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s2">"Content-Type"</span><span class="o">=&gt;</span><span class="s2">"text/plain"</span><span class="p">},</span> <span class="p">[</span><span class="s2">"Hello, Rack!"</span><span class="p">]]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="no">Application</span><span class="p">.</span><span class="nf">new</span>
+
+<span class="no">Rack</span><span class="o">::</span><span class="no">Handler</span><span class="o">::</span><span class="no">CGI</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>I kind of like this, because I’m using a simple and familiar interface for my web requests. Still, it’s probably overkill unless I need routing or request handling, like the form parameters from an HTTP <code class="language-plaintext highlighter-rouge">POST</code>.</p>
+
+<p>Of course, even if we’re not running an application server like <code class="language-plaintext highlighter-rouge">puma</code>, we’re still creating a new Ruby process for each request that comes in, so there’s some overhead to think about. You wouldn’t necessarily want to use this for applications that need to serve hundreds of thousands of requests per minute. But most applications don’t really have those requirements, if we’re being honest.</p>
+
+<p>Anywho, I do like the idea of segregating functionality into different, tiny scripts that each do one thing well. This is still something I’m starting to explore, though I do think it’s a bit funny how I’m circling back to pretty old web technology.</p>
+
+  <footer>
+    <hr />
+    
+<div class="page-navigation">
+
+  <a class="previous" href="/openntpd">&laquo; Provisioning an NTP Server</a>
+
+
+|
+
+
+  <a class="next" href="/outage">Outage &raquo;</a>
+
+</div>
+
+
+    <div class="no-comments">
+  <a href="/no-comments">No comments.</a>
+</div>
+
+    <div class="copyright">
+  &copy; 2021 <a href="https://josephchoe.com">Joseph Choe</a>.
+</div>
+
+  </footer>
+</article>
+
+    </main>
+
+    <footer>
+    </footer>
+  </body>
+</html>
